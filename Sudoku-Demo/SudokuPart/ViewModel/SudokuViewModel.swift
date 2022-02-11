@@ -20,6 +20,7 @@ struct SudokuController {
     private var yPostionArray = [(CGFloat,CGFloat)]()
     
     init() {
+        // TODO: It will be delete after git testing
         self.board = self.initBoard()
         self.blockDivide = self.initBlockDivide()
     }
