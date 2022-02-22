@@ -83,7 +83,7 @@ extension SudokuController {
      - 2.过滤选区后放入selectedStack
      - 3.selectedStack设为高亮
      - 4.点击cell设为选中
-     - TODO:  5.相关数值点都变Highlight 
+     - 5.相关数值点都变Selected
      */
     mutating func selectAction(_ x: Int,_ y: Int) {
         // - 1
@@ -101,11 +101,25 @@ extension SudokuController {
         // - 4
         board[x][y].colorSelected()
         selectedCell = board[x][y]
+        // - 5
+        let selectedArray = equalFillValueArray()
+        selectedStack += selectedArray
+        selectedArray.forEach{ board[$0.x][$0.y].colorSelected() }
     }
     
-//    func equalFillValueArray() ->  {
-//
-//    }
+    func equalFillValueArray() -> [Cell] {
+        var temp = [Cell]()
+        for x in 0..<9 {
+            for y in 0..<9 {
+                if let fillValue = selectedCell?.fillValue , fillValue != 0 {
+                    if board[x][y].fillValue == fillValue {
+                        temp.append(board[x][y])
+                    }
+                }
+            }
+        }
+        return temp
+    }
 }
 
 // - MARK: Postion Part
@@ -172,6 +186,7 @@ extension SudokuController {
             let targetValue = board[x][y].targetValue
             fillNumber == targetValue ? board[x][y].fontCorrect() : board[x][y].fontWrong()
             board[x][y].setFillValue(fillNumber)
+            selectAction(selectedCell.x,selectedCell.y)
         }
     }
 }
