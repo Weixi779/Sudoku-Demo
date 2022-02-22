@@ -35,6 +35,9 @@ fileprivate struct AdaptiveFrameII: ViewModifier {
         content
             .font(.system(size: screenWidth/13, weight: .light, design: .default))
             .frame(width: screenWidth/12, height: screenWidth/12)
-            .cornerRadius(screenWidth/50)
+            .overlay(
+                RoundedRectangle(cornerRadius: screenWidth/50)
+                    .stroke(Color.gray, lineWidth: 1)
+            )
     }
 }

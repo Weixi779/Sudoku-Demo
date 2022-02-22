@@ -109,7 +109,7 @@ extension SudokuController {
 }
 
 // - MARK: Postion Part
-extension SudokuController {
+extension SudokuController {  
     // - 新建位置信息 直到81个全部创建
     mutating func initCellPostion(_ x: Int,_ y :Int, _ rect :CGRect) {
         let startX = rect.minX
