@@ -16,6 +16,7 @@ struct SudokuPageView: View {
                 controller.createNewSudoku()
             }
             SudokuView()
+            FillButtonPageView()
         }
     }
 }
@@ -24,12 +25,15 @@ struct SudokuView: View {
     @GestureState var isLongPressde = false
     @EnvironmentObject var controller: AppController
     
-    var body: some View {
-        let drag = DragGesture()
+    var drag: some Gesture {
+        DragGesture()
             .updating($isLongPressde) { value, _, _ in
                 controller.sudoku.coordinatesFromPostion(value.location.y, value.location.x)
             }
-        return VStack(spacing: 0) {
+    }
+    
+    var body: some View {
+        VStack(spacing: 0) {
             ForEach(0..<3) { x in
                 HStack (spacing: 0) {
                     ForEach(0..<3) { y in

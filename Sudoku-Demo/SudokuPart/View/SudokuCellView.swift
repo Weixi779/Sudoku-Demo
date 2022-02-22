@@ -10,15 +10,16 @@ import SwiftUI
 
 struct SudokuCellView: View {
     @EnvironmentObject var controller: AppController
-    let x: Int
-    let y: Int
     var colorSet: ColorController  { controller.color }
     var board: [[Cell]] { controller.sudoku.board }
     var cell: Cell { board[x][y] }
     
+    let x: Int
+    let y: Int
+
     var body: some View {
         VStack {
-            cellView
+            _buildCellView
                 .contentShape(Rectangle())
         }
         .border(Color.black.opacity(0.1), width: 1)
@@ -41,11 +42,11 @@ struct SudokuCellView: View {
 }
 
 extension SudokuCellView {
-    var cellView: some View {
+    private var _buildCellView: some View {
         let cellColor: Color = colorSet.getColor(ColorSet.background(cell.backgroundColor))
         
         return VStack {
-            valueView
+            _bulidValueView
                 .adaptiveFrame()
                 .background(cellColor)
         }
@@ -53,28 +54,10 @@ extension SudokuCellView {
 }
 
 extension SudokuCellView {
-    var valueView: some View {
+   private var _bulidValueView: some View {
         let fontColor: Color = colorSet.getColor(ColorSet.font(cell.fontColor))
         
         return Text(cell.fillValue == 0 ? "" : "\(cell.fillValue)")
             .foregroundColor(fontColor)
     }
 }
-
-
-extension View {
-    func adaptiveFrame() -> some View {
-        self.modifier(AdaptiveFrame())
-    }
-}
-
-// 自适应尺寸大小
-fileprivate struct AdaptiveFrame: ViewModifier {
-    let screenWidth = UIScreen.main.bounds.width
-    func body(content: Content) -> some View {
-        content
-            .font(.system(size: screenWidth/11, weight: .light, design: .default))
-            .frame(width: screenWidth/10, height: screenWidth/10)
-    }
-}
-

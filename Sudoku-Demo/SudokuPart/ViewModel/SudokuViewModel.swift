@@ -8,6 +8,13 @@
 import Foundation
 import SwiftUI
 
+// 作为Sudoku的主要Controller
+// Sudoku相关任务都建立相关Action
+/*
+ - 位置相关
+ - 选择相关
+ - 填入相关
+ */
 struct SudokuController {
     var board = [[Cell]]()
     
@@ -67,34 +74,43 @@ mutating func initBoardWithArray(_ targetArray: [[Int]], _ fillArray :[[Int]]) {
     
 }
 
+// option + command + <-  | fold
+
 // - MARK: SelectAction Part
 extension SudokuController {
+    /*
+     - 1.将之前的选过的设为空白
+     - 2.过滤选区后放入selectedStack
+     - 3.selectedStack设为高亮
+     - 4.点击cell设为选中
+     - TODO:  5.相关数值点都变Highlight 
+     */
     mutating func selectAction(_ x: Int,_ y: Int) {
+        // - 1
         selectedStack.forEach{ board[$0.x][$0.y].colorBlank() }
-        
         selectedStack = [Cell]()
+        // - 2
         let block = x/3*3+y/3
         for index in 0..<9 {
             selectedStack.append(board[x][index])
             selectedStack.append(board[index][y])
             selectedStack.append(board[blockDivide[block][index].0][blockDivide[block][index].1])
         }
+        // - 3
         selectedStack.forEach{ board[$0.x][$0.y].colorHighLight() }
+        // - 4
         board[x][y].colorSelected()
         selectedCell = board[x][y]
     }
     
-//    mutating func allBlank() {
-//        for x in 0..<9 {
-//            for y in 0..<9 {
-//                board[x][y].colorBlank()
-//            }
-//        }
+//    func equalFillValueArray() ->  {
+//
 //    }
 }
 
 // - MARK: Postion Part
 extension SudokuController {
+    // - 新建位置信息 直到81个全部创建
     mutating func initCellPostion(_ x: Int,_ y :Int, _ rect :CGRect) {
         let startX = rect.minX
         let startY = rect.minY
@@ -108,6 +124,7 @@ extension SudokuController {
         }
     }
     
+    // - 更新cell中的位置信息 按大小更新
     mutating func updatePostionArray() {
         for cell in board[0] {
             xPostionArray.append((cell.postion!.startX, cell.postion!.endX))
@@ -119,6 +136,10 @@ extension SudokuController {
         }
     }
     
+    // - 移动点击位置Part
+    /*
+     一旦触发手势 调用这个函数
+     */
     mutating func coordinatesFromPostion(_ xPostion: CGFloat, _ yPostion: CGFloat) {
         var resX = -1
         var resY = -1
@@ -140,4 +161,17 @@ extension SudokuController {
     }
 }
 
-
+// - MARK: Fill Part
+extension SudokuController {
+    mutating func fillAction(_ fillNumber: Int) {
+        // 值为零 && .know
+        if let selectedCell = selectedCell {
+            let x = selectedCell.x
+            let y = selectedCell.y
+            guard board[x][y].isCanFilled == true else { return }
+            let targetValue = board[x][y].targetValue
+            fillNumber == targetValue ? board[x][y].fontCorrect() : board[x][y].fontWrong()
+            board[x][y].setFillValue(fillNumber)
+        }
+    }
+}
