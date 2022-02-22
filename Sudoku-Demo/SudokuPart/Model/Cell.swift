@@ -36,6 +36,7 @@ struct Cell: Codable {
     var targetValue: Int
     var fillValue: Int
     var postion: Postion?
+    var isCanFilled = true  // 是否可以被填入
     
     var fontColor: FontColor = .known
     
@@ -46,6 +47,7 @@ struct Cell: Codable {
         self.y = y
         self.targetValue = targetValue
         self.fillValue = fillValue
+        if targetValue == fillValue { isCanFilled = false }
     }
     
     mutating func setFillValue(_ fillValue: Int) {

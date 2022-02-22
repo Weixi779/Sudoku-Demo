@@ -19,6 +19,8 @@
 		A254683627B6427100451876 /* DLXController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A254683527B6427100451876 /* DLXController.swift */; };
 		A254683927B642B200451876 /* AppController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A254683827B642B200451876 /* AppController.swift */; };
 		A254683B27B642C600451876 /* ColorController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A254683A27B642C600451876 /* ColorController.swift */; };
+		A254687027BB730800451876 /* FillButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A254686F27BB730800451876 /* FillButtonView.swift */; };
+		A254687227BB74AA00451876 /* UtilModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A254687127BB74AA00451876 /* UtilModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,6 +37,8 @@
 		A254683527B6427100451876 /* DLXController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DLXController.swift; sourceTree = "<group>"; };
 		A254683827B642B200451876 /* AppController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppController.swift; sourceTree = "<group>"; };
 		A254683A27B642C600451876 /* ColorController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorController.swift; sourceTree = "<group>"; };
+		A254686F27BB730800451876 /* FillButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FillButtonView.swift; sourceTree = "<group>"; };
+		A254687127BB74AA00451876 /* UtilModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UtilModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,6 +75,7 @@
 				A254681B27B640DC00451876 /* HomePageView.swift */,
 				A254683827B642B200451876 /* AppController.swift */,
 				A254683A27B642C600451876 /* ColorController.swift */,
+				A254687127BB74AA00451876 /* UtilModel.swift */,
 				A254682F27B641F100451876 /* SudokuPart */,
 				A254683727B6429A00451876 /* DLXPart */,
 				A254681D27B640DE00451876 /* Assets.xcassets */,
@@ -110,6 +115,7 @@
 			children = (
 				A254682D27B641D600451876 /* SudokuCellView.swift */,
 				A254682B27B641C900451876 /* SudokuPageView.swift */,
+				A254686F27BB730800451876 /* FillButtonView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -204,7 +210,9 @@
 				A254682827B6419E00451876 /* SudokuViewModel.swift in Sources */,
 				A254683B27B642C600451876 /* ColorController.swift in Sources */,
 				A254682E27B641D600451876 /* SudokuCellView.swift in Sources */,
+				A254687027BB730800451876 /* FillButtonView.swift in Sources */,
 				A254683627B6427100451876 /* DLXController.swift in Sources */,
+				A254687227BB74AA00451876 /* UtilModel.swift in Sources */,
 				A254682A27B641BD00451876 /* Cell.swift in Sources */,
 				A254681C27B640DC00451876 /* HomePageView.swift in Sources */,
 				A254683927B642B200451876 /* AppController.swift in Sources */,
