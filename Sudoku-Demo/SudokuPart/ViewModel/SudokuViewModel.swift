@@ -21,12 +21,15 @@ struct SudokuController {
     var selectedStack: [Cell] = [Cell]()
     var selectedCell: Cell?
     var blockDivide = [[(Int,Int)]]()
+    private var numberCellList: [[Cell]]
     
     private var postionCount = 0
     private var xPostionArray = [(CGFloat,CGFloat)]()
     private var yPostionArray = [(CGFloat,CGFloat)]()
     
+    
     init() {
+        self.numberCellList = [[Cell]](repeating: [Cell](), count: 9)
         self.board = self.initBoard()
         self.blockDivide = self.initBlockDivide()
     }
@@ -59,19 +62,44 @@ struct SudokuController {
         return blockDivide
     }
     
-mutating func initBoardWithArray(_ targetArray: [[Int]], _ fillArray :[[Int]]) {
-        var cell = [[Cell]]()
+    // - MARK: 创建数独部分
+    mutating func initBoardWithArray(_ targetArray: [[Int]], _ fillArray :[[Int]]) {
+        var cells = [[Cell]]()
         for x in 0..<9 {
-            cell.append([Cell]())
+            cells.append([Cell]())
             for y in 0..<9 {
-                cell[x].append(
-                    Cell(x: x, y: y, targetValue: targetArray[x][y], fillValue: fillArray[x][y])
-                )
+                let cell = Cell(x: x, y: y, targetValue: targetArray[x][y], fillValue: fillArray[x][y])
+                cells[x].append(cell)
+                fillNumberToList(cell)
             }
         }
-        self.board = cell
+        self.board = cells
     }
     
+    func isCorrectCompleted() -> Bool{
+        return numberCellList.flatMap{$0}.count == 81
+    }
+}
+
+// -MARK: 拓展NumberCellList功能
+extension SudokuController {
+    // 添加cell到list中
+    mutating func fillNumberToList(_ cell: Cell) {
+        guard cell.fillValue != 0 else { return }
+        numberCellList[cell.fillValue-1].append(cell)
+    }
+    
+    // 给一个值返回[Cell]
+    func cellListArray(_ fillValue: Int) -> [Cell] {
+        guard fillValue != 0 else { return [Cell]() }
+        return numberCellList[fillValue-1]
+    }
+    
+    // 给一个值返回[Cell]数量
+    func cellListArrayCount(_ fillValue: Int) -> Int {
+        guard fillValue != 0 else { return -1 }
+        return numberCellList[fillValue-1].count
+    }
 }
 
 // option + command + <-  | fold
@@ -102,23 +130,9 @@ extension SudokuController {
         board[x][y].colorSelected()
         selectedCell = board[x][y]
         // - 5
-        let selectedArray = equalFillValueArray()
+        let selectedArray = cellListArray(selectedCell?.fillValue ?? 0)
         selectedStack += selectedArray
         selectedArray.forEach{ board[$0.x][$0.y].colorSelected() }
-    }
-    
-    func equalFillValueArray() -> [Cell] {
-        var temp = [Cell]()
-        for x in 0..<9 {
-            for y in 0..<9 {
-                if let fillValue = selectedCell?.fillValue , fillValue != 0 {
-                    if board[x][y].fillValue == fillValue {
-                        temp.append(board[x][y])
-                    }
-                }
-            }
-        }
-        return temp
     }
 }
 
@@ -150,10 +164,7 @@ extension SudokuController {
         }
     }
     
-    // - 移动点击位置Part
-    /*
-     一旦触发手势 调用这个函数
-     */
+    // - 移动点击位置Part(一旦触发手势 调用这个函数)
     mutating func coordinatesFromPostion(_ xPostion: CGFloat, _ yPostion: CGFloat) {
         var resX = -1
         var resY = -1
@@ -177,16 +188,35 @@ extension SudokuController {
 
 // - MARK: Fill Part
 extension SudokuController {
+    /*
+     - 1.判断是否可以填入
+     - 2.填入并选择该点
+     - 3.判断填入是否正确
+     - 4.判断数独是否完成
+     */
     mutating func fillAction(_ fillNumber: Int) {
-        // 值为零 && .know
-        if let selectedCell = selectedCell {
-            let x = selectedCell.x
-            let y = selectedCell.y
-            guard board[x][y].isCanFilled == true else { return }
+        guard let selectedCell = selectedCell else { return }
+        let x = selectedCell.x
+        let y = selectedCell.y
+        // - 1
+        if board[x][y].isCanFilled == true {
+            // - 2
             let targetValue = board[x][y].targetValue
-            fillNumber == targetValue ? board[x][y].fontCorrect() : board[x][y].fontWrong()
             board[x][y].setFillValue(fillNumber)
             selectAction(selectedCell.x,selectedCell.y)
+            // - 3
+            if fillNumber == targetValue {
+                board[x][y].fontCorrect()
+                board[x][y].isCanFilled = false
+                fillNumberToList(board[x][y])
+            } else {
+                board[x][y].fontWrong()
+            }
+            // - 4
+            if isCorrectCompleted() == true {
+                // TODO: Add completed Action
+                print("Sudoku is completed!")
+            }
         }
     }
 }
