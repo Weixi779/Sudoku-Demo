@@ -21,6 +21,7 @@
 		A254683B27B642C600451876 /* ColorController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A254683A27B642C600451876 /* ColorController.swift */; };
 		A254687027BB730800451876 /* FillButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A254686F27BB730800451876 /* FillButtonView.swift */; };
 		A254687227BB74AA00451876 /* UtilModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A254687127BB74AA00451876 /* UtilModel.swift */; };
+		A2F3C2AA27C72D94005E03F9 /* FunctionButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2F3C2A927C72D94005E03F9 /* FunctionButtonView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -39,6 +40,7 @@
 		A254683A27B642C600451876 /* ColorController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorController.swift; sourceTree = "<group>"; };
 		A254686F27BB730800451876 /* FillButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FillButtonView.swift; sourceTree = "<group>"; };
 		A254687127BB74AA00451876 /* UtilModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UtilModel.swift; sourceTree = "<group>"; };
+		A2F3C2A927C72D94005E03F9 /* FunctionButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunctionButtonView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -115,6 +117,7 @@
 			children = (
 				A254682D27B641D600451876 /* SudokuCellView.swift */,
 				A254682B27B641C900451876 /* SudokuPageView.swift */,
+				A2F3C2A927C72D94005E03F9 /* FunctionButtonView.swift */,
 				A254686F27BB730800451876 /* FillButtonView.swift */,
 			);
 			path = View;
@@ -217,6 +220,7 @@
 				A254681C27B640DC00451876 /* HomePageView.swift in Sources */,
 				A254683927B642B200451876 /* AppController.swift in Sources */,
 				A254682C27B641C900451876 /* SudokuPageView.swift in Sources */,
+				A2F3C2AA27C72D94005E03F9 /* FunctionButtonView.swift in Sources */,
 				A254683427B6426300451876 /* DLX.swift in Sources */,
 				A254681A27B640DC00451876 /* Sudoku_DemoApp.swift in Sources */,
 			);

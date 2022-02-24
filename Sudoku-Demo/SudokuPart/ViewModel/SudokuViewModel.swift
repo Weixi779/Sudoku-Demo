@@ -14,6 +14,7 @@ import SwiftUI
  - 位置相关
  - 选择相关
  - 填入相关
+ - 删除相关
  */
 struct SudokuController {
     var board = [[Cell]]()
@@ -83,6 +84,7 @@ struct SudokuController {
 
 // -MARK: 拓展NumberCellList功能
 extension SudokuController {
+    // 功能内都有对于0的保护
     // 添加cell到list中
     mutating func fillNumberToList(_ cell: Cell) {
         guard cell.fillValue != 0 else { return }
@@ -138,7 +140,7 @@ extension SudokuController {
 
 // - MARK: Postion Part
 extension SudokuController {  
-    // - 新建位置信息 直到81个全部创建
+    // - 新建位置信息 直到81个全部创建(内容跟着视图走 应该只会刷新一次)
     mutating func initCellPostion(_ x: Int,_ y :Int, _ rect :CGRect) {
         let startX = rect.minX
         let startY = rect.minY
@@ -217,6 +219,24 @@ extension SudokuController {
                 // TODO: Add completed Action
                 print("Sudoku is completed!")
             }
+        }
+    }
+}
+
+// —MARK: Delete Part
+extension SudokuController {
+    /*
+     // - 1.判断是否可以删除
+     // - 2.判断是否可以填入
+     // - 3.值置为0
+     // - 4.选择为0
+     */
+    mutating func deleteAction() {
+        guard let selectedCell = selectedCell else { return }
+        let x = selectedCell.x, y = selectedCell.y
+        if board[x][y].isCanFilled == true {
+            board[x][y].setFillValue(0)
+            selectAction(x,y)
         }
     }
 }
