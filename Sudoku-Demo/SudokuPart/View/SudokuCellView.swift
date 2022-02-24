@@ -47,7 +47,7 @@ extension SudokuCellView {
         
         return VStack {
             _bulidValueView
-                .adaptiveFrame()
+                .cellAdaptive()
                 .background(cellColor)
         }
     }

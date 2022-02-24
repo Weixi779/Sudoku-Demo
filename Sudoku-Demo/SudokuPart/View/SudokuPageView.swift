@@ -16,6 +16,7 @@ struct SudokuPageView: View {
                 controller.createNewSudoku()
             }
             SudokuView()
+            FuntcionViewButton()
             FillButtonPageView()
         }
     }

@@ -9,17 +9,21 @@ import Foundation
 import SwiftUI
 
 extension View {
-    func adaptiveFrame() -> some View {
-        self.modifier(AdaptiveFrameI())
+    func cellAdaptive() -> some View {
+        self.modifier(AdaptiveFrameSudokuCell())
     }
     
-func fillButtonAdaptive() -> some View {
-        self.modifier(AdaptiveFrameII())
+    func fillButtonAdaptive() -> some View {
+        self.modifier(AdaptiveFrameFillNum())
+    }
+    
+    func functionButtonAdaptive() -> some View {
+        self.modifier(AdaptiveFrameFunctionButton())
     }
 }
 
 // 自适应尺寸大小 cell
-fileprivate struct AdaptiveFrameI: ViewModifier {
+fileprivate struct AdaptiveFrameSudokuCell: ViewModifier {
     let screenWidth = UIScreen.main.bounds.width
     func body(content: Content) -> some View {
         content
@@ -29,7 +33,7 @@ fileprivate struct AdaptiveFrameI: ViewModifier {
 }
 
 // 自适应尺寸大小 fillButton
-fileprivate struct AdaptiveFrameII: ViewModifier {
+fileprivate struct AdaptiveFrameFillNum: ViewModifier {
     let screenWidth = UIScreen.main.bounds.width
     func body(content: Content) -> some View {
         content
@@ -39,5 +43,13 @@ fileprivate struct AdaptiveFrameII: ViewModifier {
                 RoundedRectangle(cornerRadius: screenWidth/50)
                     .stroke(Color.gray, lineWidth: 1)
             )
+    }
+}
+
+fileprivate struct AdaptiveFrameFunctionButton: ViewModifier {
+    let screenWidth = UIScreen.main.bounds.width
+    func body(content: Content) -> some View {
+        content
+            .frame(width: screenWidth/13, height: screenWidth/13)
     }
 }
