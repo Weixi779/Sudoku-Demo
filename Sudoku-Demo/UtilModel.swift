@@ -20,6 +20,10 @@ extension View {
     func functionButtonAdaptive() -> some View {
         self.modifier(AdaptiveFrameFunctionButton())
     }
+    
+    func noteAdaptive() -> some View {
+        self.modifier(AdaptiveFrameNote())
+    }
 }
 
 // 自适应尺寸大小 cell
@@ -50,6 +54,18 @@ fileprivate struct AdaptiveFrameFunctionButton: ViewModifier {
     let screenWidth = UIScreen.main.bounds.width
     func body(content: Content) -> some View {
         content
-            .frame(width: screenWidth/13, height: screenWidth/13)
+            .frame(width: screenWidth/15, height: screenWidth/15)
+    }
+}
+
+// 自适应尺寸大小 note
+fileprivate struct AdaptiveFrameNote: ViewModifier {
+    let screenWidth = UIScreen.main.bounds.width
+    func body(content: Content) -> some View {
+        content
+            .font(.system(size: screenWidth/35, weight: .light, design: .default))
+            .frame(width: screenWidth/36, height: screenWidth/36)
+            .foregroundColor(.gray)
+            //.frame(width: screenWidth/90, height: screenWidth/90)
     }
 }

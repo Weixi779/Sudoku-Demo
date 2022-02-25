@@ -22,6 +22,13 @@ enum BackgroundColor: Codable {
     case selected       // 被选择
 }
 
+// 展示方式
+enum CellState: Codable {
+    case normal         // 正常现象
+    case note           // 笔记模式
+}
+
+// 小方块四个坐标位置
 struct Postion: Codable {
     let startX: CGFloat
     let startY: CGFloat
@@ -41,6 +48,9 @@ struct Cell: Codable {
     var fontColor: FontColor = .known
     
     var backgroundColor: BackgroundColor = .blank
+    
+    var cellState: CellState = .normal
+    var noteArray: [Bool] = [Bool](repeating: false, count: 9)
     
     init(x: Int, y: Int, targetValue: Int, fillValue: Int) {
         self.x = x
@@ -97,3 +107,29 @@ extension Cell {
     }
 }
 
+// Note Part
+extension Cell {
+    mutating func normalState() {
+        self.cellState = .normal
+    }
+    
+    mutating func noteState() {
+        self.cellState = .note
+    }
+    
+    mutating func addNumForNote(_ num: Int) {
+        self.noteArray[num-1] = true
+    }
+    
+    mutating func subNumForNote(_ num: Int) {
+        self.noteArray[num-1] = false
+    }
+    
+    mutating func clearNoteArray() {
+        self.noteArray = [Bool](repeating: false, count: 9)
+    }
+    
+    func isNoteExist(_ num: Int) -> Bool {
+        return noteArray[num-1] == true
+    }
+}
