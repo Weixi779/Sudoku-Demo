@@ -10,24 +10,28 @@ import SwiftUI
 
 struct FillButtonPageView: View {
     @EnvironmentObject var controller: AppController
+    var state: SudokuState { controller.sudoku.state }
     var sudoku: SudokuController { controller.sudoku }
+    
+    func canUsed(_ num: Int) -> Bool {
+        return sudoku.cellListArrayCount(num) != 9
+    }
     var body: some View {
         HStack {
             ForEach(1..<10) { num in
                 Button {
-                    if sudoku.cellListArrayCount(num) != 9 {
-                        controller.sudoku.fillAction(num)
+                    if canUsed(num) {
+                        switch state {
+                        case .fill: controller.sudoku.fillAction(num)
+                        case .note: controller.sudoku.noteAction(num)
+                        }
                     }
                 } label: {
-                    Text(showingNumber(num))
+                    Text(canUsed(num) ? "\(num)" : " ")
                         .fillButtonAdaptive()
                 }
             }
         }
-    }
-    
-    func showingNumber(_ num: Int) -> String {
-        return sudoku.cellListArrayCount(num) != 9 ? "\(num)" : " "
     }
 }
 

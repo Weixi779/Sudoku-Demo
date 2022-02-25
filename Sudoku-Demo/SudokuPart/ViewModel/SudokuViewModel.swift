@@ -16,6 +16,11 @@ import SwiftUI
  - 填入相关
  - 删除相关
  */
+enum SudokuState {
+    case fill
+    case note
+}
+
 struct SudokuController {
     var board = [[Cell]]()
     
@@ -28,6 +33,7 @@ struct SudokuController {
     private var xPostionArray = [(CGFloat,CGFloat)]()
     private var yPostionArray = [(CGFloat,CGFloat)]()
     
+    var state: SudokuState = .fill
     
     init() {
         self.numberCellList = [[Cell]](repeating: [Cell](), count: 9)
@@ -77,7 +83,7 @@ struct SudokuController {
         self.board = cells
     }
     
-    func isCorrectCompleted() -> Bool{
+    private func isCorrectCompleted() -> Bool{
         return numberCellList.flatMap{$0}.count == 81
     }
 }
@@ -101,6 +107,16 @@ extension SudokuController {
     func cellListArrayCount(_ fillValue: Int) -> Int {
         guard fillValue != 0 else { return -1 }
         return numberCellList[fillValue-1].count
+    }
+}
+
+// -MARK: SudokuState Part
+extension SudokuController {
+    mutating func fillState() {
+        state = .fill
+    }
+    mutating func noteState() {
+        state = .note
     }
 }
 
@@ -192,8 +208,8 @@ extension SudokuController {
 extension SudokuController {
     /*
      - 1.判断是否可以填入
-     - 2.填入并选择该点
-     - 3.判断填入是否正确
+     - 2.判断填入是否正确
+     - 3.填入并选择该点 并将附近的noteArray清除填入值
      - 4.判断数独是否完成
      */
     mutating func fillAction(_ fillNumber: Int) {
@@ -202,18 +218,27 @@ extension SudokuController {
         let y = selectedCell.y
         // - 1
         if board[x][y].isCanFilled == true {
+            board[x][y].normalState()
+            clearNote()
             // - 2
             let targetValue = board[x][y].targetValue
-            board[x][y].setFillValue(fillNumber)
-            selectAction(selectedCell.x,selectedCell.y)
-            // - 3
             if fillNumber == targetValue {
                 board[x][y].fontCorrect()
+                board[x][y].setFillValue(fillNumber)
                 board[x][y].isCanFilled = false
                 fillNumberToList(board[x][y])
             } else {
                 board[x][y].fontWrong()
+                board[x][y].setFillValue(fillNumber)
             }
+            // - 3
+            let block = x/3*3+y/3
+            for index in 0..<9 {
+                board[x][index].subNumForNote(fillNumber)
+                board[index][y].subNumForNote(fillNumber)
+                board[blockDivide[block][index].0][blockDivide[block][index].1].subNumForNote(fillNumber)
+            }
+            selectAction(selectedCell.x,selectedCell.y)
             // - 4
             if isCorrectCompleted() == true {
                 // TODO: Add completed Action
@@ -235,8 +260,35 @@ extension SudokuController {
         guard let selectedCell = selectedCell else { return }
         let x = selectedCell.x, y = selectedCell.y
         if board[x][y].isCanFilled == true {
+            board[x][y].normalState()
             board[x][y].setFillValue(0)
+            clearNote()
             selectAction(x,y)
         }
     }
+}
+
+// -MARK: Note Part
+extension SudokuController {
+    /*
+     - 1.确认可选
+     - 2.确认是否存在 不存在就加上 存在就减去
+     */
+    mutating func noteAction(_ num: Int) {
+        guard let selectedCell = selectedCell else { return }
+        let x = selectedCell.x, y = selectedCell.y
+        if board[x][y].isCanFilled == true {
+            board[x][y].noteState()
+            board[x][y].isNoteExist(num) ? board[x][y].subNumForNote(num) : board[x][y].addNumForNote(num)
+        }
+    }
+    
+    // 清空noteArray
+    mutating func clearNote() {
+        guard let selectedCell = selectedCell else { return }
+        let x = selectedCell.x, y = selectedCell.y
+        board[x][y].clearNoteArray()
+    }
+    
+    
 }

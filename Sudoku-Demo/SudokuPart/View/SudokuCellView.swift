@@ -13,6 +13,7 @@ struct SudokuCellView: View {
     var colorSet: ColorController  { controller.color }
     var board: [[Cell]] { controller.sudoku.board }
     var cell: Cell { board[x][y] }
+    var state: CellState { cell.cellState }
     
     let x: Int
     let y: Int
@@ -45,8 +46,14 @@ extension SudokuCellView {
     private var _buildCellView: some View {
         let cellColor: Color = colorSet.getColor(ColorSet.background(cell.backgroundColor))
         
+        @ViewBuilder var helper: some View {
+            switch state {
+            case .normal: _bulidValueView
+            case .note: _buildNoteView(cell: cell)
+            }
+        }
         return VStack {
-            _bulidValueView
+            helper
                 .cellAdaptive()
                 .background(cellColor)
         }
@@ -61,3 +68,33 @@ extension SudokuCellView {
             .foregroundColor(fontColor)
     }
 }
+
+extension SudokuCellView {
+    struct _buildNoteView: View {
+        var cell: Cell
+        func arrIndex(_ row: Int, _ col: Int) -> Int {
+            return (col+row*3) + 1
+        }
+        var body: some View {
+            VStack(alignment: .center, spacing: 0) {
+                ForEach(0..<3) { row in
+                    HStack(alignment: .center, spacing: 0) {
+                        ForEach(0..<3){ col in
+                            Text( cell.isNoteExist(arrIndex(row, col)) ? " \(arrIndex(row,col))" : "" )
+                                .noteAdaptive()
+                        }
+                    }
+                }
+            }
+        }
+        
+    }
+}
+
+
+
+//struct SwiftUIView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        _buildNoteView()
+//    }
+//}

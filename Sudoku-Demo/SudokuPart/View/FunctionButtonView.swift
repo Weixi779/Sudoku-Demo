@@ -10,23 +10,43 @@ import SwiftUI
 
 struct FuntcionViewButton: View {
     @EnvironmentObject var controller: AppController
-    
+    var state: SudokuState { controller.sudoku.state }
     var body: some View {
         HStack {
+            _fillStateButton
+            _noteStateButton
             Spacer()
-            _deleteButtonView
+            _deleteButton
         }
+        .padding([.horizontal])
     }
     
-    var _deleteButtonView: some View {
+    var _fillStateButton: some View {
+        _bulidButtonView(systemName: "pencil", textString: "填入")
+            .padding([.horizontal])
+            .foregroundColor(stateColor(.fill))
+            .onTapGesture {
+                controller.sudoku.fillState()
+            }
+    }
+    
+    var _noteStateButton: some View {
+        _bulidButtonView(systemName: "pencil.and.outline", textString: "笔记")
+            .padding([.horizontal])
+            .foregroundColor(stateColor(.note))
+            .onTapGesture {
+                controller.sudoku.noteState()
+            }
+    }
+    
+    var _deleteButton: some View {
         Button {
             controller.sudoku.deleteAction()
         } label: {
             _bulidButtonView(systemName: "pencil.slash", textString: "删除")
-                .padding([.horizontal])
         }
+        .padding([.horizontal])
         .foregroundColor(Color.black)
-
     }
     
     struct _bulidButtonView: View {
@@ -40,9 +60,13 @@ struct FuntcionViewButton: View {
                     .functionButtonAdaptive()
                 Text(textString)
                     .font(.caption)
-                    //.fixedSize()
+                    .fixedSize(horizontal: false, vertical: true)
             }
             
         }
+    }
+    
+    private func stateColor(_ buttonState: SudokuState) -> Color {
+        return state == buttonState ? Color.blue : Color.gray
     }
 }
