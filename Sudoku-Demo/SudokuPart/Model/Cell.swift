@@ -28,108 +28,140 @@ enum CellState: Codable {
     case note           // 笔记模式
 }
 
-// 小方块四个坐标位置
-struct Postion: Codable {
-    let startX: CGFloat
-    let startY: CGFloat
-    let endX: CGFloat
-    let endY: CGFloat
-}
-
 struct Cell: Codable {
     //var id = UUID()
     let x: Int
     let y: Int
-    var targetValue: Int
-    var fillValue: Int
-    var postion: Postion?
-    var isCanFilled = true  // 是否可以被填入
+    var rect: CGRect?
+    private var _targetValue: Int = 0
+    private var _fillValue: Int = 0
+    private var _isCanFilled = false  // 是否可以被填入
     
-    var fontColor: FontColor = .known
+    private var _cellState: CellState = .normal
+    private var _fontColor: FontColor = .known
+    private var _backgroundColor: BackgroundColor = .blank
     
-    var backgroundColor: BackgroundColor = .blank
+    private var _noteArray: [Bool] = [Bool](repeating: false, count: 9)
     
-    var cellState: CellState = .normal
-    var noteArray: [Bool] = [Bool](repeating: false, count: 9)
-    
-    init(x: Int, y: Int, targetValue: Int, fillValue: Int) {
+    init(x: Int, y: Int) {
         self.x = x
         self.y = y
-        self.targetValue = targetValue
-        self.fillValue = fillValue
-        if targetValue == fillValue { isCanFilled = false }
     }
     
-    mutating func setFillValue(_ fillValue: Int) {
-        self.fillValue = fillValue
+    mutating func resetCell(_ targetValue: Int, _ fillValue: Int) {
+        setTargetValue(targetValue)
+        setFillValue(fillValue)
+        setCanFilledValue(targetValue != fillValue)
     }
-    
-    mutating func setTargetValue(_ targetValue: Int) {
-        self.targetValue = targetValue
+}
+
+// - MARK: TargetValue Part
+extension Cell {
+    private(set) var targetValue: Int {
+        get { return _targetValue }
+        set { _targetValue = newValue }
+    }
+    mutating func setTargetValue(_ value: Int) {
+        targetValue = value
+    }
+}
+
+// - MARK: FillValue Part
+extension Cell {
+    private(set) var fillValue: Int {
+        get { return _fillValue }
+        set { _fillValue = newValue }
+    }
+    mutating func setFillValue(_ value: Int) {
+        fillValue = value
+    }
+}
+
+extension Cell {
+    /// Cell是否可以填入,true为可填,false为不可填
+    private(set) var isCanFilled: Bool {
+        get { return _isCanFilled }
+        set { _isCanFilled = newValue }
+    }
+    private mutating func setCanFilledValue(_ value: Bool) {
+        isCanFilled = value
     }
 }
 
 // FontColorPart
 extension Cell {
+    private(set) var fontColor: FontColor {
+        get { return _fontColor }
+        set { _fontColor = newValue }
+    }
     mutating func fontKnown() {
-        self.fontColor = .known
+        fontColor = .known
     }
    
     mutating func fontCorrect() {
-        self.fontColor = .correct
+        fontColor = .correct
     }
    
     mutating func fontWrong() {
-        self.fontColor = .wrong
+        fontColor = .wrong
     }
    
 }
 
 // BackgroundColor
 extension Cell {
+    private(set) var backgroundColor: BackgroundColor {
+        get { return _backgroundColor }
+        set { _backgroundColor = newValue }
+    }
     mutating func colorBlank() {
-        self.backgroundColor = .blank
+        backgroundColor = .blank
     }
    
     mutating func colorHighLight() {
-        self.backgroundColor = .highLight
+        backgroundColor = .highLight
     }
    
     mutating func colorSelected() {
-        self.backgroundColor = .selected
+        backgroundColor = .selected
     }
 }
 
 // Postion
 extension Cell {
-    mutating func setCellPostion(_ postion: Postion) {
-        self.postion = postion
+    mutating func setCellPostion(_ rect: CGRect) {
+        self.rect = rect
+    }
+}
+
+extension Cell {
+    private(set) var cellState: CellState {
+        get { return _cellState }
+        set { _cellState = newValue }
+    }
+    mutating func normalState() {
+        cellState = .normal
+    }
+    mutating func noteState() {
+        cellState = .note
     }
 }
 
 // Note Part
 extension Cell {
-    mutating func normalState() {
-        self.cellState = .normal
-    }
-    
-    mutating func noteState() {
-        self.cellState = .note
-    }
-    
     mutating func addNumForNote(_ num: Int) {
-        self.noteArray[num-1] = true
+        self._noteArray[num-1] = true
     }
     
     mutating func subNumForNote(_ num: Int) {
-        self.noteArray[num-1] = false
+        self._noteArray[num-1] = false
     }
     
     mutating func clearNoteArray() {
-        self.noteArray = [Bool](repeating: false, count: 9)
+        self._noteArray = [Bool](repeating: false, count: 9)
     }
     
     func isNoteExist(_ num: Int) -> Bool {
-        return noteArray[num-1] == true
+        return _noteArray[num-1] == true
     }
 }

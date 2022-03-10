@@ -14,7 +14,7 @@ struct FillButtonPageView: View {
     var sudoku: SudokuController { controller.sudoku }
     
     func canUsed(_ num: Int) -> Bool {
-        return sudoku.cellListArrayCount(num) != 9
+        return sudoku.isFilledCountFull(num)
     }
     var body: some View {
         HStack {
