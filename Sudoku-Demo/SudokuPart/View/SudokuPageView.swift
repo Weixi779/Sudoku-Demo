@@ -29,7 +29,7 @@ struct SudokuView: View {
     var drag: some Gesture {
         DragGesture()
             .updating($isLongPressde) { value, _, _ in
-                controller.sudoku.coordinatesFromPostion(value.location.y, value.location.x)
+                controller.sudoku.coordinatesFromPostion(value.location)
             }
     }
     

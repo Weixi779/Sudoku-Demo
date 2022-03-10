@@ -22,36 +22,39 @@ enum SudokuState {
 }
 
 struct SudokuController {
-    var board = [[Cell]]()
+    var board = [[Cell]]() // 数独面板
     
     var selectedStack: [Cell] = [Cell]()
     var selectedCell: Cell?
-    var blockDivide = [[(Int,Int)]]()
-    private var numberCellList: [[Cell]]
+    var blockDivide = [[(Int,Int)]]() // 方便画图
+    var state: SudokuState = .fill // 面板状态
     
-    private var postionCount = 0
-    private var xPostionArray = [(CGFloat,CGFloat)]()
-    private var yPostionArray = [(CGFloat,CGFloat)]()
-    
-    var state: SudokuState = .fill
+    private var cellList: CellList = CellList()
     
     init() {
-        self.numberCellList = [[Cell]](repeating: [Cell](), count: 9)
-        self.board = self.initBoard()
+        for x in 0..<9 {
+            board.append([Cell]())
+            for y in 0..<9 {
+                board[x].append( Cell(x: x, y: y) )
+            }
+        }
+        self.cellList = CellList()
         self.blockDivide = self.initBlockDivide()
     }
     
-    func initBoard() -> [[Cell]] {
-        var cell = [[Cell]]()
-        for x in 0..<9 {
-            cell.append([Cell]())
-            for y in 0..<9 {
-                cell[x].append(
-                    Cell(x: x, y: y, targetValue: 0, fillValue:0)
-                )
+    // 创建时立即执行 或者是在Restart的时候
+    private mutating func initAction() {
+        initBoard()
+        cellList = CellList()
+    }
+    
+    // 重置为零
+    mutating func initBoard() {
+        for x in 0..<board.count {
+            for y in 0..<board[x].count {
+                board[x][y].resetCell(0, 0)
             }
         }
-        return cell
     }
     
     func initBlockDivide() -> [[(Int,Int)]] {
@@ -71,42 +74,23 @@ struct SudokuController {
     
     // - MARK: 创建数独部分
     mutating func initBoardWithArray(_ targetArray: [[Int]], _ fillArray :[[Int]]) {
-        var cells = [[Cell]]()
+        initAction()
         for x in 0..<9 {
-            cells.append([Cell]())
             for y in 0..<9 {
-                let cell = Cell(x: x, y: y, targetValue: targetArray[x][y], fillValue: fillArray[x][y])
-                cells[x].append(cell)
-                fillNumberToList(cell)
+                let targetValue = targetArray[x][y]
+                let fillValue = fillArray[x][y]
+                board[x][y].resetCell(targetValue, fillValue)
+                cellList.fillCellToList(board[x][y])
             }
         }
-        self.board = cells
     }
     
     private func isCorrectCompleted() -> Bool{
-        return numberCellList.flatMap{$0}.count == 81
-    }
-}
-
-// -MARK: 拓展NumberCellList功能
-extension SudokuController {
-    // 功能内都有对于0的保护
-    // 添加cell到list中
-    mutating func fillNumberToList(_ cell: Cell) {
-        guard cell.fillValue != 0 else { return }
-        numberCellList[cell.fillValue-1].append(cell)
+        return cellList.cellListTotalCount() == 81
     }
     
-    // 给一个值返回[Cell]
-    func cellListArray(_ fillValue: Int) -> [Cell] {
-        guard fillValue != 0 else { return [Cell]() }
-        return numberCellList[fillValue-1]
-    }
-    
-    // 给一个值返回[Cell]数量
-    func cellListArrayCount(_ fillValue: Int) -> Int {
-        guard fillValue != 0 else { return -1 }
-        return numberCellList[fillValue-1].count
+    func isFilledCountFull(_ fillValue: Int) -> Bool {
+        return cellList.cellListArrayCount(fillValue) != 9
     }
 }
 
@@ -132,10 +116,10 @@ extension SudokuController {
      - 5.相关数值点都变Selected
      */
     mutating func selectAction(_ x: Int,_ y: Int) {
-        // - 1
-        selectedStack.forEach{ board[$0.x][$0.y].colorBlank() }
-        selectedStack = [Cell]()
+        setStackBlank() // - 1
         // - 2
+        // - TODO: 过滤选区 抽取
+        // - MARK: 看这里
         let block = x/3*3+y/3
         for index in 0..<9 {
             selectedStack.append(board[x][index])
@@ -148,9 +132,14 @@ extension SudokuController {
         board[x][y].colorSelected()
         selectedCell = board[x][y]
         // - 5
-        let selectedArray = cellListArray(selectedCell?.fillValue ?? 0)
+        let selectedArray = cellList.cellListArray(selectedCell?.fillValue ?? 0) // 加入相同数据内容
         selectedStack += selectedArray
         selectedArray.forEach{ board[$0.x][$0.y].colorSelected() }
+    }
+    
+    mutating func setStackBlank() {
+        selectedStack.forEach{ board[$0.x][$0.y].colorBlank() }
+        selectedStack = [Cell]()
     }
 }
 
@@ -158,48 +147,17 @@ extension SudokuController {
 extension SudokuController {  
     // - 新建位置信息 直到81个全部创建(内容跟着视图走 应该只会刷新一次)
     mutating func initCellPostion(_ x: Int,_ y :Int, _ rect :CGRect) {
-        let startX = rect.minX
-        let startY = rect.minY
-        let endX = startX + rect.size.width
-        let endY = startY + rect.size.height
-        let postion = Postion(startX: startX, startY: startY, endX: endX, endY: endY)
-        board[x][y].setCellPostion(postion)
-        postionCount += 1
-        if postionCount == 81 {
-            updatePostionArray()
-        }
-    }
-    
-    // - 更新cell中的位置信息 按大小更新
-    mutating func updatePostionArray() {
-        for cell in board[0] {
-            xPostionArray.append((cell.postion!.startX, cell.postion!.endX))
-        }
-        
-        for index in 0..<board.count {
-            let cell = board[index][0]
-            yPostionArray.append((cell.postion!.startY, cell.postion!.endY))
-        }
+        board[x][y].setCellPostion(rect)
     }
     
     // - 移动点击位置Part(一旦触发手势 调用这个函数)
-    mutating func coordinatesFromPostion(_ xPostion: CGFloat, _ yPostion: CGFloat) {
-        var resX = -1
-        var resY = -1
-        for indexX in 0..<xPostionArray.count {
-            if (xPostion > xPostionArray[indexX].0 && xPostion < xPostionArray[indexX].1) {
-                resX = indexX
-                break
+    mutating func coordinatesFromPostion(_ postion: CGPoint) {
+        for x in 0..<board.count {
+            for y in 0..<board[x].count {
+                if let bool = board[x][y].rect?.contains(postion) , bool == true {
+                    selectAction(x, y)
+                }
             }
-        }
-        for indexY in 0..<yPostionArray.count {
-            if (yPostion > yPostionArray[indexY].0 && yPostion < yPostionArray[indexY].1) {
-                resY = indexY
-                break
-            }
-        }
-        if resX != -1 && resY != -1 {
-            selectAction(resX, resY)
         }
     }
 }
@@ -225,8 +183,7 @@ extension SudokuController {
             if fillNumber == targetValue {
                 board[x][y].fontCorrect()
                 board[x][y].setFillValue(fillNumber)
-                board[x][y].isCanFilled = false
-                fillNumberToList(board[x][y])
+                cellList.fillCellToList(board[x][y])
             } else {
                 board[x][y].fontWrong()
                 board[x][y].setFillValue(fillNumber)
@@ -289,6 +246,4 @@ extension SudokuController {
         let x = selectedCell.x, y = selectedCell.y
         board[x][y].clearNoteArray()
     }
-    
-    
 }
