@@ -21,6 +21,7 @@
 		A254683B27B642C600451876 /* ColorController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A254683A27B642C600451876 /* ColorController.swift */; };
 		A254687027BB730800451876 /* FillButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A254686F27BB730800451876 /* FillButtonView.swift */; };
 		A254687227BB74AA00451876 /* UtilModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A254687127BB74AA00451876 /* UtilModel.swift */; };
+		A268D91F27F2B3710018EBDD /* TimeCounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A268D91E27F2B3710018EBDD /* TimeCounter.swift */; };
 		A2BA09C427D9C2F10000BC0F /* CellList.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2BA09C327D9C2F10000BC0F /* CellList.swift */; };
 		A2F3C2AA27C72D94005E03F9 /* FunctionButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2F3C2A927C72D94005E03F9 /* FunctionButtonView.swift */; };
 /* End PBXBuildFile section */
@@ -41,6 +42,7 @@
 		A254683A27B642C600451876 /* ColorController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorController.swift; sourceTree = "<group>"; };
 		A254686F27BB730800451876 /* FillButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FillButtonView.swift; sourceTree = "<group>"; };
 		A254687127BB74AA00451876 /* UtilModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UtilModel.swift; sourceTree = "<group>"; };
+		A268D91E27F2B3710018EBDD /* TimeCounter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeCounter.swift; sourceTree = "<group>"; };
 		A2BA09C327D9C2F10000BC0F /* CellList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellList.swift; sourceTree = "<group>"; };
 		A2F3C2A927C72D94005E03F9 /* FunctionButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunctionButtonView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -130,6 +132,7 @@
 			children = (
 				A254682727B6419E00451876 /* SudokuViewModel.swift */,
 				A2BA09C327D9C2F10000BC0F /* CellList.swift */,
+				A268D91E27F2B3710018EBDD /* TimeCounter.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -216,6 +219,7 @@
 				A254682827B6419E00451876 /* SudokuViewModel.swift in Sources */,
 				A254683B27B642C600451876 /* ColorController.swift in Sources */,
 				A254682E27B641D600451876 /* SudokuCellView.swift in Sources */,
+				A268D91F27F2B3710018EBDD /* TimeCounter.swift in Sources */,
 				A254687027BB730800451876 /* FillButtonView.swift in Sources */,
 				A254683627B6427100451876 /* DLXController.swift in Sources */,
 				A2BA09C427D9C2F10000BC0F /* CellList.swift in Sources */,

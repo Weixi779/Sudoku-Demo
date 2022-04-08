@@ -10,15 +10,39 @@ import SwiftUI
 
 struct SudokuPageView: View {
     @EnvironmentObject var controller: AppController
+    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+
     var body: some View {
         VStack {
             Button("create sudoku") {
                 controller.createNewSudoku()
             }
+            HStack {
+                Counter
+            }
+            
             SudokuView()
             FuntcionViewButton()
             FillButtonPageView()
+        }.onReceive(timer) { _ in
+            controller.sudoku.timerCounter.addOneSeconds()
         }
+    }
+    
+    var Counter: some View {
+        var timerCounter : TimerCounter {
+            controller.sudoku.timerCounter
+//            arrow.triangle.2.circlepath
+        }
+        return HStack {
+            Text(timerCounter.time)
+            Button {
+                controller.sudoku.timerCounter.iconFunction()
+            } label: {
+                Image(systemName: timerCounter.iconSystemName())
+                    .foregroundColor(.black)
+            }
+        }.padding([.horizontal])
     }
 }
 

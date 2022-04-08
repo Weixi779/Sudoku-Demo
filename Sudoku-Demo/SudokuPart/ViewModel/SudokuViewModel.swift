@@ -30,6 +30,7 @@ struct SudokuController {
     var state: SudokuState = .fill // 面板状态
     
     private var cellList: CellList = CellList()
+    var timerCounter = TimerCounter()
     
     init() {
         for x in 0..<9 {
@@ -83,6 +84,23 @@ struct SudokuController {
                 cellList.fillCellToList(board[x][y])
             }
         }
+        setStackBlank()
+        // 回来单独放一个函数
+        timerCounter.resetTime()
+        timerCounter.startCounting()
+    }
+    
+    // ** 返回的是struct 并不是 class
+    // - TODO: 无去重操作
+    private func fliterSeclectArea(_ x: Int,_ y: Int) -> [(Int,Int)] {
+        var result = [(Int,Int)]()
+        let block = x/3*3+y/3
+        for index in 0..<9 {
+            result.append((x,index))
+            result.append((index,y))
+            result.append((blockDivide[block][index].0,blockDivide[block][index].1))
+        }
+        return result
     }
     
     private func isCorrectCompleted() -> Bool{
@@ -117,17 +135,10 @@ extension SudokuController {
      */
     mutating func selectAction(_ x: Int,_ y: Int) {
         setStackBlank() // - 1
-        // - 2
-        // - TODO: 过滤选区 抽取
-        // - MARK: 看这里
-        let block = x/3*3+y/3
-        for index in 0..<9 {
-            selectedStack.append(board[x][index])
-            selectedStack.append(board[index][y])
-            selectedStack.append(board[blockDivide[block][index].0][blockDivide[block][index].1])
+        fliterSeclectArea(x, y).forEach{
+            selectedStack.append(board[$0.0][$0.1]) // - 2
+            board[$0.0][$0.1].colorHighLight() // - 3
         }
-        // - 3
-        selectedStack.forEach{ board[$0.x][$0.y].colorHighLight() }
         // - 4
         board[x][y].colorSelected()
         selectedCell = board[x][y]
@@ -189,11 +200,8 @@ extension SudokuController {
                 board[x][y].setFillValue(fillNumber)
             }
             // - 3
-            let block = x/3*3+y/3
-            for index in 0..<9 {
-                board[x][index].subNumForNote(fillNumber)
-                board[index][y].subNumForNote(fillNumber)
-                board[blockDivide[block][index].0][blockDivide[block][index].1].subNumForNote(fillNumber)
+            fliterSeclectArea(x, y).forEach{
+                board[$0.0][$0.1].subNumForNote(fillNumber)
             }
             selectAction(selectedCell.x,selectedCell.y)
             // - 4
