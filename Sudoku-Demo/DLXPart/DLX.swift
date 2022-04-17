@@ -199,7 +199,23 @@ extension DLX {
         stack = stack.shuffled()
     }
     
+    // 无限制操作
     mutating func RemoveToSingele() -> [[Int]]{
+        var stack = [IteratorHelper]()
+        IteratorStack(&stack)
+        for item in stack {
+            mBoard[item.x][item.y] = 0
+            setSubsetValue(item.x, item.y, item.value, false)
+            if check() == false {
+                mBoard[item.x][item.y] = item.value
+                setSubsetValue(item.x, item.y, item.value, true)
+            }
+        }
+        return mBoard
+    }
+    
+    // 有限制变更
+    mutating func RemoveToSingele(_ target: Int) -> [[Int]] {
         var stack = [IteratorHelper]()
         IteratorStack(&stack)
         var reduceNumber = 0
@@ -208,7 +224,7 @@ extension DLX {
             setSubsetValue(item.x, item.y, item.value, false)
             if check() == true {
                 reduceNumber += 1
-                // TODO: 跳出操作
+                if reduceNumber >= target { return mBoard }
             } else {
                 mBoard[item.x][item.y] = item.value
                 setSubsetValue(item.x, item.y, item.value, true)
@@ -251,7 +267,6 @@ extension DLX {
             mBoard[i][j] = 0
             return
         }
-        
         return sucessfulCount == 1 ? true : false
     }
 

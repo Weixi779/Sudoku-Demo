@@ -13,26 +13,77 @@ struct SudokuPageView: View {
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
     var body: some View {
-        VStack {
-            Button("create sudoku") {
-                controller.createNewSudoku()
+        ZStack {
+            VStack {
+                CreateSudoku
+                HStack {
+                    Restart
+                    Spacer()
+                    Counter
+                }.padding(.horizontal)
+                
+                SudokuView()
+                FuntcionViewButton()
+                FillButtonPageView()
+            }.onReceive(timer) { _ in
+                controller.sudoku.timerCounter.addOneSeconds()
             }
-            HStack {
-                Counter
-            }
-            
-            SudokuView()
-            FuntcionViewButton()
-            FillButtonPageView()
-        }.onReceive(timer) { _ in
-            controller.sudoku.timerCounter.addOneSeconds()
+//            ZStack {
+//                Button {
+//
+//                } label: {
+//                    Image(systemName: "arrow.triangle.2.circlepath")
+//                        .foregroundColor(.black)
+//                        .frame(width: 200, height: 200)
+//                }
+//            }
         }
     }
     
+    var CreateSudoku: some View {
+        return HStack {
+            Button("创建数独") {
+                controller.createNewSudoku()
+            }
+            .padding(.horizontal)
+            Menu("难度选择") {
+                Button("Easy") {
+                    Task {
+                        await controller.dlx.setDiff(.easy)
+                    }
+                }
+                Button("Normal") {
+                    Task {
+                        await controller.dlx.setDiff(.normal)
+                    }
+                }
+                Button("Hard") {
+                    Task {
+                        await controller.dlx.setDiff(.hard)
+                    }
+                }
+                Button("Hell") {
+                    Task {
+                        await controller.dlx.setDiff(.unlimit)
+                    }
+                }
+            }
+            .padding(.horizontal)
+        }
+    }
+    
+    var Restart: some View {
+        return Button {
+            controller.restartSudoku()
+        } label: {
+            Image(systemName: "arrow.triangle.2.circlepath")
+                .foregroundColor(.black)
+        }
+
+    }
     var Counter: some View {
         var timerCounter : TimerCounter {
             controller.sudoku.timerCounter
-//            arrow.triangle.2.circlepath
         }
         return HStack {
             Text(timerCounter.time)

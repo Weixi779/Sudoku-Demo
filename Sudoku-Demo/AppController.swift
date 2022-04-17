@@ -12,11 +12,25 @@ class AppController: ObservableObject {
     @Published var dlx: DLXController = DLXController()
     @Published var color: ColorController = ColorController()
     
+    var task = Task{}
+    
     func createNewSudoku()  {
-        Task.init {
+        task = Task.init {
             let result = await dlx.createStartPlate()
             sudoku.initBoardWithArray(result.0, result.1)
         }
+    }
+    
+    func restartSudoku() {
+        Task {
+            let result = await dlx.targetBoard
+            sudoku.initBoardWithArray(result.0, result.1)
+            sudoku.timerCounter.resetTime()
+        }
+    }
+    
+    func canelCrateSudoku() {
+        
     }
     
 }
