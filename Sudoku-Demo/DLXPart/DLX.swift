@@ -50,25 +50,38 @@ struct DLX {
         return boxRow * mBoxSize + boxCol
     }
     
+    // 是否有效
     private func isValid(_ i:Int, _ j: Int, _ val:Int) -> Bool {
         let tempVal = val - 1
         let isPresent = mRowSubset[i][tempVal] || mColSubset[j][tempVal] || mBoxSubset[computeBoxNo(i, j)][tempVal]
         return !isPresent
     }
     
+    // 初始化数据
     private mutating func initSubsets() {
         for i in 0..<mBoard.count {
             for j in 0..<mBoard[i].count {
                 let value = mBoard[i][j]
-                if value != 0 { setSubsetValue(i, j, value, true) }
+                if value != 0 {
+                    setSubsetValue(i, j, value, true)
+                }
             }
         }
     }
     
+    // 设置数值
     private mutating func setSubsetValue(_ i: Int, _ j: Int, _ value: Int, _ present: Bool) {
         mRowSubset[i][value - 1] = present
         mColSubset[j][value - 1] = present
         mBoxSubset[computeBoxNo(i, j)][value - 1] = present
+    }
+    
+    // 提炼方法
+    private mutating func nextStep(_ i: inout Int, _ j: inout Int) {
+        if i == mBoardSize {
+            i = 0
+            j += 1
+        }
     }
 }
 
@@ -81,19 +94,20 @@ mutating func solve() -> [[Int]] {
         return mBoard
     }
     
+    // 解数独
     @discardableResult
     private mutating func solve(_ i: Int, _ j: Int) -> Bool{
         var i = i , j = j
-        if i == mBoardSize {
-            i = 0
-            j += 1
-            if j == mBoardSize { return true }
-        }
         
-        if mBoard[i][j] != 0 {
-            return solve(i+1, j)
-        }
+        nextStep(&i, &j)
         
+        // 成功条件
+        if j == mBoardSize { return true }
+        
+        // 如果是已知
+        if mBoard[i][j] != 0 { return solve(i+1, j) }
+        
+        // 从1到9遍历
         for value in (1...mBoardSize) {
             if isValid(i, j, value) {
                 mBoard[i][j] = value
@@ -106,7 +120,10 @@ mutating func solve() -> [[Int]] {
         mBoard[i][j] = 0
         return false
     }
+
 }
+
+
 
 // 生成终盘Part
 /*
@@ -127,20 +144,24 @@ extension DLX {
                 temp += 1
             }
         }
-        initSolveSudoku(0,0)
+        if initSolveSudoku(0,0) == false {
+            print("初始化数独无解")
+        }
         return mBoard
     }
     
     @discardableResult
     private mutating func initSolveSudoku(_ i:Int, _ j:Int) -> Bool {
         var i = i ,j = j
-        if i == mBoardSize {
-            i = 0
-            j += 1
-            if j == mBoardSize { return true }
-        }
+        nextStep(&i, &j)
+        
+        // 成功条件
+        if j == mBoardSize { return true }
+        
+        // 如果是已知
         if mBoard[i][j] != 0 { return initSolveSudoku(i+1, j) }
         
+        // 1到9随机遍历
         for value in (1...9).shuffled() {
             if isValid(i, j, value) {
                 mBoard[i][j] = value
@@ -202,20 +223,23 @@ extension DLX {
         
         func check(_ i:Int, _ j:Int) {
             var i = i , j = j
-            if i == mBoardSize {
-                i = 0
-                j += 1
-                //成功条件
-                if j == mBoardSize {
-                    sucessfulCount += 1
-                    return
-                }
+            nextStep(&i, &j)
+            
+            // 成功条件
+            if j == mBoardSize {
+                sucessfulCount += 1
+                return
             }
+            
+            // 跳过已知
             if mBoard[i][j] != 0 {
                 check(i+1, j)
                 return
             }
+            
+            // 失败条件 不止一个解
             if sucessfulCount > 1 { return }
+            
             for value in (1...mBoardSize) {
                 if isValid(i, j, value) {
                     mBoard[i][j] = value
@@ -227,8 +251,8 @@ extension DLX {
             mBoard[i][j] = 0
             return
         }
+        
         return sucessfulCount == 1 ? true : false
     }
-    
 
 }

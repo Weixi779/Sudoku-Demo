@@ -19,5 +19,4 @@ class AppController: ObservableObject {
         }
     }
     
-    
 }
