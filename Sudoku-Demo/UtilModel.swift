@@ -66,6 +66,5 @@ fileprivate struct AdaptiveFrameNote: ViewModifier {
             .font(.system(size: screenWidth/35, weight: .light, design: .default))
             .frame(width: screenWidth/36, height: screenWidth/36)
             .foregroundColor(.gray)
-            //.frame(width: screenWidth/90, height: screenWidth/90)
     }
 }

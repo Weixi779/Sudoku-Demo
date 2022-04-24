@@ -13,11 +13,6 @@ import Foundation
 // 1. 添加中途取消机制 (长时间没完成自动取消)
 // 2. 难度系数选择
 
-// 终盘 -> 解数独 -> 初盘
-enum solveState {
-    case finaly, solving, start
-}
-
 enum difficulty {
     case easy, normal, hard, unlimit, hell
 }
@@ -45,16 +40,15 @@ extension difficulty {
 }
 
 actor DLXController {
-    // - TODO: 移到AppController里头进行Task操作
-    var isSolvingSudoku: Bool = false
-    private var _state: solveState = .start
     private var _diff: difficulty = .easy
-//    public var diff: String {
-//        _diff.diffDescription()
-//    }
+    private var _taskProgress: String = ""
     
     private var _startBoard = [[Int]]()
     private var _finalBoard = [[Int]]()
+    
+    private var _dotCount = 1
+    
+    public var isCreatingStartPlate = false;
     
     public var targetBoard: ([[Int]],[[Int]]) {
         get { return (_startBoard, _finalBoard) }
@@ -62,57 +56,53 @@ actor DLXController {
     
     // 解数独
     func solve(_ board: [[Int]]) -> [[Int]] {
-        _state = .solving
-        //startSolveSudoku()
         var dlx = DLX(board)
         let res = dlx.solve()
-        //finishSolveSudoku()
         return res
+    }
+    
+    // 生成接口
+    func createSudoku() -> ([[Int]],[[Int]]) {
+        _taskProgress = "开始生成数独..."
+        
+        finalPlate()
+        _taskProgress = "终盘生成完毕..."
+        
+        startPlate()
+        
+        return targetBoard
     }
     
     // 生成终盘
-    func finalPlate() -> [[Int]] {
-        _state = .finaly
-        //startSolveSudoku()
+    private func finalPlate() {
         var dlx = DLX()
         let res = dlx.initFinalPlate()
-        //finishSolveSudoku()
-        return res
+        _startBoard = res
     }
     
     // 生成初盘 -> 同时也是开始接口
-    func createStartPlate() -> ([[Int]],[[Int]]) {
-        _startBoard = finalPlate()
+    private func startPlate() {
         var dlx = DLX(_startBoard)
-        //state = .start
-        //startSolveSudoku()
         if (_diff == .easy || _diff == .normal || _diff == .hard) {
             _finalBoard = dlx.RemoveToSingele(_diff.unkownCount())
         } else if (_diff == .unlimit || _diff == .hell) {
             _finalBoard = dlx.RemoveToSingele()
         }
-        //finishSolveSudoku()
-        return targetBoard
     }
     
-    // 解释函数
-    private func startSolveSudoku() {
-        isSolvingSudoku = true
-        switch _state {
-        case .start: print("-----------------正在生成初始数独,请稍后-----------------")
-        case .solving: print("--------------------正在解数独,请稍后-------------------")
-        case .finaly: print("-----------------正在生成最终数独,请稍后-----------------")
+    public func updateText() {
+        _dotCount += 1
+        _dotCount %= 4
+        var tempStr = ""
+        for _ in 0..<_dotCount {
+            tempStr += "."
         }
+        
+        _taskProgress = "正在生成初盘" + tempStr
     }
     
-    // 解释函数
-    private func finishSolveSudoku() {
-        isSolvingSudoku = false
-        switch _state {
-        case .start: print("-----------------初始数独生成完毕-----------------")
-        case .solving: print("-------------------数独解决完毕------------------")
-        case .finaly: print("-----------------最终数独解决完毕-----------------")
-        }
+    public func TaskProgress() -> String {
+        return _taskProgress
     }
     
     public func setDiff(_ diff: difficulty ) {

@@ -23,6 +23,7 @@
 		A254687227BB74AA00451876 /* UtilModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A254687127BB74AA00451876 /* UtilModel.swift */; };
 		A268D91F27F2B3710018EBDD /* TimeCounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A268D91E27F2B3710018EBDD /* TimeCounter.swift */; };
 		A2BA09C427D9C2F10000BC0F /* CellList.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2BA09C327D9C2F10000BC0F /* CellList.swift */; };
+		A2E2DC682813FFB200E10014 /* HomePage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2E2DC672813FFB200E10014 /* HomePage.swift */; };
 		A2F3C2AA27C72D94005E03F9 /* FunctionButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2F3C2A927C72D94005E03F9 /* FunctionButtonView.swift */; };
 /* End PBXBuildFile section */
 
@@ -44,6 +45,7 @@
 		A254687127BB74AA00451876 /* UtilModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UtilModel.swift; sourceTree = "<group>"; };
 		A268D91E27F2B3710018EBDD /* TimeCounter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeCounter.swift; sourceTree = "<group>"; };
 		A2BA09C327D9C2F10000BC0F /* CellList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellList.swift; sourceTree = "<group>"; };
+		A2E2DC672813FFB200E10014 /* HomePage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePage.swift; sourceTree = "<group>"; };
 		A2F3C2A927C72D94005E03F9 /* FunctionButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunctionButtonView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -82,6 +84,7 @@
 				A254683827B642B200451876 /* AppController.swift */,
 				A254683A27B642C600451876 /* ColorController.swift */,
 				A254687127BB74AA00451876 /* UtilModel.swift */,
+				A2E2DC692813FFBB00E10014 /* HomePart */,
 				A254682F27B641F100451876 /* SudokuPart */,
 				A254683727B6429A00451876 /* DLXPart */,
 				A254681D27B640DE00451876 /* Assets.xcassets */,
@@ -144,6 +147,14 @@
 				A254683527B6427100451876 /* DLXController.swift */,
 			);
 			path = DLXPart;
+			sourceTree = "<group>";
+		};
+		A2E2DC692813FFBB00E10014 /* HomePart */ = {
+			isa = PBXGroup;
+			children = (
+				A2E2DC672813FFB200E10014 /* HomePage.swift */,
+			);
+			path = HomePart;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -231,6 +242,7 @@
 				A2F3C2AA27C72D94005E03F9 /* FunctionButtonView.swift in Sources */,
 				A254683427B6426300451876 /* DLX.swift in Sources */,
 				A254681A27B640DC00451876 /* Sudoku_DemoApp.swift in Sources */,
+				A2E2DC682813FFB200E10014 /* HomePage.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

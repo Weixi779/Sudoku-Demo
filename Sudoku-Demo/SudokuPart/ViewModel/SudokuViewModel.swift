@@ -85,13 +85,11 @@ struct SudokuController {
             }
         }
         setStackBlank()
-        // 回来单独放一个函数
         timerCounter.resetTime()
         timerCounter.startCounting()
     }
     
     // ** 返回的是struct 并不是 class
-    // - TODO: 无去重操作
     private func fliterSeclectArea(_ x: Int,_ y: Int) -> [(Int,Int)] {
         var result = [(Int,Int)]()
         let block = x/3*3+y/3

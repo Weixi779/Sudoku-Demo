@@ -28,15 +28,9 @@ struct SudokuPageView: View {
             }.onReceive(timer) { _ in
                 controller.sudoku.timerCounter.addOneSeconds()
             }
-//            ZStack {
-//                Button {
-//
-//                } label: {
-//                    Image(systemName: "arrow.triangle.2.circlepath")
-//                        .foregroundColor(.black)
-//                        .frame(width: 200, height: 200)
-//                }
-//            }
+            if controller.isSolvingSudoku == true {
+                StopCreateSudoku
+            }
         }
     }
     
@@ -94,6 +88,29 @@ struct SudokuPageView: View {
                     .foregroundColor(.black)
             }
         }.padding([.horizontal])
+    }
+    
+    var StopCreateSudoku: some View {
+        return ZStack {
+            RoundedRectangle(cornerRadius: 10)
+                .frame(width: 200, height: 60)
+                .foregroundColor(.white)
+                .shadow(radius: 5)
+            
+            Text("正在生成数独")
+
+            ZStack{
+                Circle()
+                    .frame(width: 20, height: 20, alignment: .topTrailing)
+                    .foregroundColor(.gray)
+                Image(systemName: "multiply")
+                    .foregroundColor(.white)
+            }
+            .offset(x: 100, y: -30)
+            .onTapGesture {
+                controller.canelCrateSudoku()
+            }
+        }
     }
 }
 

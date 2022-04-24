@@ -12,14 +12,20 @@ class AppController: ObservableObject {
     @Published var dlx: DLXController = DLXController()
     @Published var color: ColorController = ColorController()
     
-    var task = Task{}
+    public var isSolvingSudoku: Bool = false
     
-    func createNewSudoku()  {
-        task = Task.init {
-            let result = await dlx.createStartPlate()
+    private var _task = Task{}
+    
+    func createNewSudoku() {
+        _task = Task.init {
+            isSolvingSudoku = true
+            let result = await dlx.createSudoku()
+            if Task.isCancelled { return }
             sudoku.initBoardWithArray(result.0, result.1)
+            isSolvingSudoku = false
         }
     }
+    
     
     func restartSudoku() {
         Task {
@@ -30,7 +36,7 @@ class AppController: ObservableObject {
     }
     
     func canelCrateSudoku() {
-        
+        _task.cancel()
+        isSolvingSudoku = false
     }
-    
 }
