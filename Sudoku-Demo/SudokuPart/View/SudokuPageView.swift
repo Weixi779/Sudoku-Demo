@@ -10,14 +10,76 @@ import SwiftUI
 
 struct SudokuPageView: View {
     @EnvironmentObject var controller: AppController
+    @Binding var tabSelection: Int
+    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+
     var body: some View {
-        VStack {
-            Button("create sudoku") {
-                controller.createNewSudoku()
+        ZStack {
+            VStack {
+                HStack {
+                    Restart
+                    Spacer()
+                    Counter
+                }.padding(.horizontal)
+                
+                SudokuView()
+                FuntcionViewButton()
+                FillButtonPageView()
+            }.onReceive(timer) { _ in
+                if tabSelection == 2 {
+                    controller.sudoku.timerCounter.addOneSeconds()
+                }
             }
-            SudokuView()
-            FuntcionViewButton()
-            FillButtonPageView()
+            if controller.isSolvingSudoku == true {
+                StopCreateSudoku
+            }
+        }
+    }
+    
+    var Restart: some View {
+        return Button {
+            controller.restartSudoku()
+        } label: {
+            Image(systemName: "arrow.triangle.2.circlepath")
+                .foregroundColor(.black)
+        }
+
+    }
+    var Counter: some View {
+        var timerCounter : TimerCounter {
+            controller.sudoku.timerCounter
+        }
+        return HStack {
+            Text(timerCounter.time)
+            Button {
+                controller.sudoku.timerCounter.iconFunction()
+            } label: {
+                Image(systemName: timerCounter.iconSystemName())
+                    .foregroundColor(.black)
+            }
+        }.padding([.horizontal])
+    }
+    
+    var StopCreateSudoku: some View {
+        return ZStack {
+            RoundedRectangle(cornerRadius: 10)
+                .frame(width: 200, height: 60)
+                .foregroundColor(.white)
+                .shadow(radius: 5)
+            
+            Text("正在生成数独")
+
+            ZStack{
+                Circle()
+                    .frame(width: 20, height: 20, alignment: .topTrailing)
+                    .foregroundColor(.gray)
+                Image(systemName: "multiply")
+                    .foregroundColor(.white)
+            }
+            .offset(x: 100, y: -30)
+            .onTapGesture {
+                controller.canelCrateSudoku()
+            }
         }
     }
 }

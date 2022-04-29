@@ -32,6 +32,7 @@ struct Cell: Codable {
     //var id = UUID()
     let x: Int
     let y: Int
+    
     var rect: CGRect?
     private var _targetValue: Int = 0
     private var _fillValue: Int = 0
