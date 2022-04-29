@@ -8,25 +8,20 @@
 
 import Foundation
 
-// TODO: List
-// 最重要的首先就是 要将结果放在主线程去刷新 √
-// 1. 添加中途取消机制 (长时间没完成自动取消)
-// 2. 难度系数选择
-
 enum difficulty {
     case easy, normal, hard, unlimit, hell
 }
 
 extension difficulty {
-//    func diffDescription() -> String {
-//        switch (self) {
-//        case.easy: return "简单"
-//        case.normal: return "普通"
-//        case.hard: return "困难"
-//        case.unlimit: return "无限制"
-//        case.hell: return "地狱"
-//        }
-//    }
+    func diffDescription() -> String {
+        switch (self) {
+        case.easy: return "简单"
+        case.normal: return "普通"
+        case.hard: return "困难"
+        case.unlimit: return "无限制"
+        case.hell: return "地狱"
+        }
+    }
     
     func unkownCount() -> Int {
         switch (self) {
@@ -107,5 +102,9 @@ actor DLXController {
     
     public func setDiff(_ diff: difficulty ) {
         _diff = diff
+    }
+    
+    public func getDiffDescription() -> String {
+        return _diff.diffDescription()
     }
 }

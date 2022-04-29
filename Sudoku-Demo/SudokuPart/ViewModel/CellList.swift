@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct CellList {
+struct CellList: Codable {
     // 读写整个棋盘情况 [[fillValue=1][fillValue=2]....[fillValue=9]]
     private var _cellList: [[Cell]]
     

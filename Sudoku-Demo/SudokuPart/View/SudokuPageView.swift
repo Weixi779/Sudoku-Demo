@@ -17,9 +17,10 @@ struct SudokuPageView: View {
         ZStack {
             VStack {
                 HStack {
-                    Restart
+                    Text(controller.sudoku.diffDescription)
                     Spacer()
                     Counter
+                    Restart
                 }.padding(.horizontal)
                 
                 SudokuView()
@@ -114,7 +115,7 @@ struct SudokuView: View {
 
 struct SudokuBlockView: View {
     @EnvironmentObject var controller: AppController
-    var block: [[(Int,Int)]] {
+    var block: [[IntTumple]] {
         controller.sudoku.blockDivide
     }
     let number: Int
@@ -124,8 +125,8 @@ struct SudokuBlockView: View {
                 HStack(spacing: 0) {
                     ForEach(0..<3) { y in
                         SudokuCellView(
-                            x: block[number][x*3+y].0 ,
-                            y: block[number][x*3+y].1
+                            x: block[number][x*3+y].zero ,
+                            y: block[number][x*3+y].one
                         )
                     }
                 }

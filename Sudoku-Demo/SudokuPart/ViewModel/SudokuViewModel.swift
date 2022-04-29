@@ -16,17 +16,26 @@ import SwiftUI
  - 填入相关
  - 删除相关
  */
-enum SudokuState {
+enum SudokuState: Codable {
     case fill
     case note
 }
 
-struct SudokuController {
-    var board = [[Cell]]() // 数独面板
+struct IntTumple: Codable {
+    var zero: Int
+    var one: Int
+}
+
+struct SudokuController: Codable {
+    public var board = [[Cell]]() // 数独面板
+    public var targetBoard = [[Int]]()
+    public var fillBoard = [[Int]]()
+    
+    public var diffDescription = ""
     
     var selectedStack: [Cell] = [Cell]()
     var selectedCell: Cell?
-    var blockDivide = [[(Int,Int)]]() // 方便画图
+    var blockDivide = [[IntTumple]]() // 方便画图
     var state: SudokuState = .fill // 面板状态
     
     private var cellList: CellList = CellList()
@@ -58,14 +67,14 @@ struct SudokuController {
         }
     }
     
-    func initBlockDivide() -> [[(Int,Int)]] {
-        var blockDivide = [[(Int,Int)]]()
+    func initBlockDivide() -> [[IntTumple]] {
+        var blockDivide = [[IntTumple]]()
         let arr = [[0,1,2], [3,4,5], [6,7,8]]
         for count in 0..<9 {
-            var temp = [(Int,Int)]()
+            var temp = [IntTumple]()
             for i in arr[count/3] {
                 for j in arr[count%3] {
-                    temp.append((i,j))
+                    temp.append(IntTumple(zero: i, one: j))
                 }
             }
             blockDivide.append(temp)
@@ -87,6 +96,8 @@ struct SudokuController {
         setStackBlank()
         timerCounter.resetTime()
         timerCounter.startCounting()
+        targetBoard = targetArray
+        fillBoard = fillArray
     }
     
     // ** 返回的是struct 并不是 class
@@ -96,11 +107,11 @@ struct SudokuController {
         for index in 0..<9 {
             result.append((x,index))
             result.append((index,y))
-            result.append((blockDivide[block][index].0,blockDivide[block][index].1))
+            result.append((blockDivide[block][index].zero,blockDivide[block][index].one))
         }
         return result
     }
-    
+
     private func isCorrectCompleted() -> Bool{
         return cellList.cellListTotalCount() == 81
     }

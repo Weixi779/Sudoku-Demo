@@ -17,7 +17,7 @@ import SwiftUI
  - 导出时间
  */
 
-struct TimerCounter {
+struct TimerCounter: Codable{
     private var _seconds: Int = 0
     public var isCounting: Bool = false;
     var time: String {
