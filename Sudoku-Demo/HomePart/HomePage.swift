@@ -8,22 +8,30 @@
 import SwiftUI
 
 struct HomePage: View {
+    @Binding var tabSelection: Int
+    
     var body: some View {
         VStack {
             UserInfo()
+            Spacer()
             SudokuContinueButton()
-            SudokuCreateButton()
+            SudokuCreateButton(tabSelection: $tabSelection)
         }
+        .padding([.vertical])
     }
 }
 
 struct UserInfo: View {
+    @EnvironmentObject var controller: AppController
+    
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 10)
-                .foregroundColor(.gray.opacity(0.5))
+                .foregroundColor(.white)
                 .padding([.horizontal])
                 .frame(height: 80)
+                .shadow(radius: 5)
+
             
             HStack {
                 ZStack {
@@ -98,13 +106,15 @@ struct SudokuContinueButton: View {
                 .frame(height: 30)
                 .padding(.vertical)
             }
-
         }
+        .shadow(radius: 5)
             
     }
 }
 
 struct SudokuCreateButton: View {
+    @EnvironmentObject var controller: AppController
+    @Binding var tabSelection: Int
     @State var isPressed = false
     var body: some View {
         VStack {
@@ -126,8 +136,36 @@ struct SudokuCreateButton: View {
             isPressed.toggle()
         }
         .confirmationDialog("请选择难度", isPresented: $isPressed, titleVisibility: .visible) {
-            Button("Blue") {
-                print("Blue")
+            Button("简单") {
+                Task {
+                    await controller.dlx.setDiff(.easy)
+                    controller.createNewSudoku()
+                }
+                tabSelection = 2
+            }
+            
+            Button("普通") {
+                Task {
+                    await controller.dlx.setDiff(.normal)
+                    controller.createNewSudoku()
+                }
+                tabSelection = 2
+            }
+            
+            Button("困难") {
+                Task {
+                    await controller.dlx.setDiff(.hard)
+                    controller.createNewSudoku()
+                }
+                tabSelection = 2
+            }
+            
+            Button("地狱") {
+                Task {
+                    await controller.dlx.setDiff(.unlimit)
+                    controller.createNewSudoku()
+                }
+                tabSelection = 2
             }
             
             Button("取消", role: .cancel) {
@@ -136,8 +174,8 @@ struct SudokuCreateButton: View {
         }
     }
 }
-struct HomePage_Previews: PreviewProvider {
-    static var previews: some View {
-        HomePage()
-    }
-}
+//struct HomePage_Previews: PreviewProvider {
+//    static var previews: some View {
+//        HomePage()
+//    }
+//}

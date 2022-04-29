@@ -11,7 +11,7 @@ class AppController: ObservableObject {
     @Published var sudoku: SudokuController = SudokuController()
     @Published var dlx: DLXController = DLXController()
     @Published var color: ColorController = ColorController()
-    
+        
     public var isSolvingSudoku: Bool = false
     
     private var _task = Task{}

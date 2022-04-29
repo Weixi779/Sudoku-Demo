@@ -8,8 +8,26 @@
 import SwiftUI
 
 struct HomePageView: View {
+    @State private var tabSelection = 1
     var body: some View {
-        HomePage()
-//        SudokuPageView()
+        TabView(selection: $tabSelection) {
+            HomePage(tabSelection: $tabSelection)
+                .tabItem {
+                    Image(systemName: "house.fill")
+                    Text("主页")
+                }.tag(1)
+            
+            SudokuPageView(tabSelection: $tabSelection)
+                .tabItem {
+                    Image(systemName: "gamecontroller.fill")
+                    Text("游戏")
+                }.tag(2)
+            
+            SettingView()
+                .tabItem {
+                    Image(systemName: "gearshape.fill")
+                    Text("更多")
+                }.tag(3)
+        }
     }
 }
