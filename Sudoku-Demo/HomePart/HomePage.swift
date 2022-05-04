@@ -14,7 +14,12 @@ struct HomePage: View {
         VStack {
             UserInfo()
             Spacer()
-            SudokuContinueButton()
+            Text("Sudoku")
+                .font(.system(size: 60))
+                .bold()
+                .foregroundColor(.gray.opacity(0.8))
+            Spacer()
+            SudokuContinueButton(tabSelection: $tabSelection)
             SudokuCreateButton(tabSelection: $tabSelection)
         }
         .padding([.vertical])
@@ -87,7 +92,9 @@ struct UserInfo: View {
 }
 
 struct SudokuContinueButton: View {
-    
+    @EnvironmentObject var controller: AppController
+    @Binding var tabSelection: Int
+
     var body: some View {
         VStack {
             ZStack {
@@ -99,13 +106,23 @@ struct SudokuContinueButton: View {
                     Text("继续游戏")
                         .foregroundColor(.white)
                         .font(.headline)
-                    Text("02:06-容易　")
-                        .foregroundColor(.white)
-                        .font(.caption)
+                        .padding(.top)
+                    
+                    HStack{
+                        Text("\(controller.sudoku.diffDescription)")
+                        Text("-")
+                        Text("\(controller.sudoku.timerCounter.time)")
+                    }
+                    .foregroundColor(.white)
+                    .font(.caption)
+                    .padding(.bottom)
+                    
                 }
                 .frame(height: 30)
-                .padding(.vertical)
             }
+        }
+        .onTapGesture {
+            tabSelection = 2
         }
         .shadow(radius: 5)
             
