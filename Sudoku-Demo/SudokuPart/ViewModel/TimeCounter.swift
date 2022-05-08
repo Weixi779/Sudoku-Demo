@@ -22,12 +22,17 @@ struct TimerCounter: Codable{
     public var isCounting: Bool = false;
     var time: String {
         get {
-            let timeMin = _seconds / 60
-            let mins = timeMin < 10 ? "0\(timeMin)" : "\(timeMin)"
-            let timeSec = _seconds % 60
-            let secs = timeSec < 10 ? "0\(timeSec)" : "\(timeSec)"
-            return "\(mins) : \(secs)"
+            return TimerCounter.secondConvertTime(_seconds)
         }
+    }
+    
+    public static func secondConvertTime(_ seconds: Int) -> String {
+        guard seconds != Int.max else { return "00 : 00"}
+        let timeMin = seconds / 60
+        let mins = timeMin < 10 ? "0\(timeMin)" : "\(timeMin)"
+        let timeSec = seconds % 60
+        let secs = timeSec < 10 ? "0\(timeSec)" : "\(timeSec)"
+        return "\(mins) : \(secs)"
     }
     
     mutating func resetTime() {
@@ -48,9 +53,8 @@ struct TimerCounter: Codable{
         isCounting = false
     }
     
-    public mutating func exportTime() -> String {
-        stopCounting()
-        return time
+    public func exportTime() -> Int {
+        return _seconds
     }
     
     public func iconSystemName() -> String {

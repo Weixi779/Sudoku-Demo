@@ -8,26 +8,44 @@
 import SwiftUI
 
 struct HomePage: View {
+    @EnvironmentObject var controller: AppController
+
     @Binding var tabSelection: Int
     
     var body: some View {
         VStack {
-            UserInfo()
+            UserInfoView()
             Spacer()
             Text("Sudoku")
                 .font(.system(size: 60))
                 .bold()
                 .foregroundColor(.gray.opacity(0.8))
             Spacer()
-            SudokuContinueButton(tabSelection: $tabSelection)
+            if (controller.sudoku.isShowButton) {
+                SudokuContinueButton(tabSelection:  $tabSelection)
+            }
             SudokuCreateButton(tabSelection: $tabSelection)
         }
         .padding([.vertical])
     }
 }
 
-struct UserInfo: View {
+struct UserInfoView: View {
     @EnvironmentObject var controller: AppController
+    @State var isShowSheet = false
+    @State var tempText = ""
+    
+    var userInfo: UserInfo {
+        controller.sudoku.userInfo
+    }
+    
+    var progressValue: Int {
+        userInfo.experience - userInfo.NextLevelExperience(userInfo.level-1)
+    }
+    
+    var progressTotal: Int {
+        userInfo.NextLevelExperience(userInfo.level) - userInfo.experience
+    }
     
     var body: some View {
         ZStack {
@@ -46,24 +64,63 @@ struct UserInfo: View {
                 
                 VStack {
                     HStack {
-                        Text("Player")
+                        Text(userInfo.userName)
                         Spacer()
                         Image(systemName: "square.and.pencil")
                             .resizable()
                             .frame(width: 25, height: 25)
                             .onTapGesture {
-                                // TODO: Profile 编辑
+                                isShowSheet = true
                             }
                     }
                     .padding(.bottom)
-                    ProgressView(value: 25, total: 100)
+                    
+                    ProgressView(value: Double(progressValue),
+                                 total: Double(progressTotal)
+                    )
                 }
                 .frame(height: 60)
             }
             .padding([.horizontal])
             .padding([.horizontal])
+        }.sheet(isPresented: $isShowSheet) {
+            VStack {
+                
+                HStack {
+                    Text("用户名:")
+                    TextField(userInfo.userName, text: $tempText) {
+                        controller.sudoku.userInfo.EditUserName(tempText)
+                        tempText = ""
+                    }
+                }
+                .padding(.horizontal)
+                Divider()
+                
+                HStack() {
+                    Text("等级:")
+                    Text("\(userInfo.level)")
+                    Spacer()
+                }
+                .padding(.horizontal)
+                Divider()
+                
+                HStack() {
+                    Text("经验:")
+                    Text("\(userInfo.experience)")
+                    Spacer()
+                }
+                .padding(.horizontal)
+                Divider()
+
+                HStack() {
+                    Text("升级所需经验:")
+                    Text("\(userInfo.NextLevelExperience(userInfo.level) - userInfo.experience)")
+                    Spacer()
+                }
+                .padding(.horizontal)
+                Divider()
+            }
         }
-        
     }
     
     var avator: some View {
@@ -84,7 +141,7 @@ struct UserInfo: View {
             Circle()
                 .frame(width: 20, height: 20, alignment: .topTrailing)
                 .foregroundColor(.red)
-            Text("1")
+            Text("\(userInfo.level)")
                 .foregroundColor(.white)
         }
         .offset(x: 25, y: 25)
@@ -154,41 +211,33 @@ struct SudokuCreateButton: View {
         }
         .confirmationDialog("请选择难度", isPresented: $isPressed, titleVisibility: .visible) {
             Button("简单") {
-                Task {
-                    await controller.dlx.setDiff(.easy)
-                    controller.createNewSudoku()
-                }
-                tabSelection = 2
+                chooseSudokuDiff(.easy)
             }
             
             Button("普通") {
-                Task {
-                    await controller.dlx.setDiff(.normal)
-                    controller.createNewSudoku()
-                }
-                tabSelection = 2
+                chooseSudokuDiff(.normal)
             }
             
             Button("困难") {
-                Task {
-                    await controller.dlx.setDiff(.hard)
-                    controller.createNewSudoku()
-                }
-                tabSelection = 2
+                chooseSudokuDiff(.hard)
             }
             
             Button("地狱") {
-                Task {
-                    await controller.dlx.setDiff(.unlimit)
-                    controller.createNewSudoku()
-                }
-                tabSelection = 2
+                chooseSudokuDiff(.unlimit)
             }
             
             Button("取消", role: .cancel) {
                 
             }
         }
+    }
+    
+    func chooseSudokuDiff(_ diff: Difficulty) {
+        Task {
+            await controller.dlx.setDiff(diff)
+            controller.createNewSudoku()
+        }
+        tabSelection = 2
     }
 }
 //struct HomePage_Previews: PreviewProvider {

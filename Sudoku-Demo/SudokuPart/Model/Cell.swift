@@ -53,6 +53,7 @@ struct Cell: Codable {
         setTargetValue(targetValue)
         setFillValue(fillValue)
         setCanFilledValue(targetValue != fillValue)
+        normalState()
     }
 }
 
@@ -86,6 +87,9 @@ extension Cell {
     }
     private mutating func setCanFilledValue(_ value: Bool) {
         isCanFilled = value
+        if !isCanFilled {
+            fontColor = .known
+        }
     }
 }
 

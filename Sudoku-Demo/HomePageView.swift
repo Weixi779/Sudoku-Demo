@@ -23,7 +23,7 @@ struct HomePageView: View {
                     Text("游戏")
                 }.tag(2)
             
-            SettingView()
+            RecordView()
                 .tabItem {
                     Image(systemName: "gearshape.fill")
                     Text("更多")

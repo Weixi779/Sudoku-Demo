@@ -31,7 +31,16 @@ struct SudokuController: Codable {
     public var targetBoard = [[Int]]()
     public var fillBoard = [[Int]]()
     
-    public var diffDescription = ""
+    public var sudokuDiff: Difficulty = .easy
+    
+    public var diffDescription: String {
+        return sudokuDiff.diffDescription()
+    }
+    
+    public var userInfo = UserInfo()
+    
+    public var isCompleted = false
+    public var wrongCount = 0
     
     var selectedStack: [Cell] = [Cell]()
     var selectedCell: Cell?
@@ -56,10 +65,13 @@ struct SudokuController: Codable {
     private mutating func initAction() {
         initBoard()
         cellList = CellList()
+        AllBlank()
+        wrongCount = 0
+        isCompleted = false
     }
     
     // 重置为零
-    mutating func initBoard() {
+    private mutating func initBoard() {
         for x in 0..<board.count {
             for y in 0..<board[x].count {
                 board[x][y].resetCell(0, 0)
@@ -116,8 +128,34 @@ struct SudokuController: Codable {
         return cellList.cellListTotalCount() == 81
     }
     
+    public var isShowButton: Bool {
+        return cellList.cellListTotalCount() != 0
+    }
+    
     func isFilledCountFull(_ fillValue: Int) -> Bool {
         return cellList.cellListArrayCount(fillValue) != 9
+    }
+    
+    func recordStartGame() {
+        let recorder = userInfo.currentRecorder(sudokuDiff)
+        recorder.AddStartCount()
+    }
+    
+    mutating func recordFinshGame() {
+        let recorder = userInfo.currentRecorder(sudokuDiff)
+        recorder.AddVicotryCount()
+        recorder.AddWrongCount(wrongCount)
+        if wrongCount == 0 {
+            recorder.AddPerfectWinCount()
+        }
+        recorder.AddTimeArray(timerCounter.exportTime())
+        userInfo.AddExperience(sudokuDiff)
+    }
+    
+    mutating public func ClearSudokuInfo() {
+        isCompleted = false
+        initAction()
+        timerCounter.resetTime()
     }
 }
 
@@ -160,6 +198,14 @@ extension SudokuController {
     mutating func setStackBlank() {
         selectedStack.forEach{ board[$0.x][$0.y].colorBlank() }
         selectedStack = [Cell]()
+    }
+    
+    mutating func AllBlank() {
+        for x in 0..<9 {
+            for y in 0..<9 {
+                board[x][y].colorBlank()
+            }
+        }
     }
 }
 
@@ -207,6 +253,7 @@ extension SudokuController {
             } else {
                 board[x][y].fontWrong()
                 board[x][y].setFillValue(fillNumber)
+                wrongCount += 1
             }
             // - 3
             fliterSeclectArea(x, y).forEach{
@@ -215,7 +262,10 @@ extension SudokuController {
             selectAction(selectedCell.x,selectedCell.y)
             // - 4
             if isCorrectCompleted() == true {
-                // TODO: Add completed Action
+                // TODO: 添加经验内容
+                recordFinshGame()
+                isCompleted = true
+                timerCounter.stopCounting()
                 print("Sudoku is completed!")
             }
         }

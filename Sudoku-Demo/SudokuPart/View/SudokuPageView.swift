@@ -32,7 +32,13 @@ struct SudokuPageView: View {
                 }
             }
             if controller.isSolvingSudoku == true {
-                StopCreateSudoku
+                StopCreateSudokuView
+                    .onAppear {
+                        controller.sudoku.timerCounter.stopCounting()
+                    }
+            }
+            if controller.sudoku.isCompleted == true {
+                CompletedSudokuView
             }
         }
     }
@@ -61,7 +67,7 @@ struct SudokuPageView: View {
         }.padding([.horizontal])
     }
     
-    var StopCreateSudoku: some View {
+    var StopCreateSudokuView: some View {
         return ZStack {
             RoundedRectangle(cornerRadius: 10)
                 .frame(width: 200, height: 60)
@@ -80,6 +86,33 @@ struct SudokuPageView: View {
             .offset(x: 100, y: -30)
             .onTapGesture {
                 controller.canelCrateSudoku()
+            }
+        }
+    }
+    
+    var CompletedSudokuView: some View {
+        return ZStack {
+            RoundedRectangle(cornerRadius: 10)
+                .frame(width: 250, height: 80)
+                .foregroundColor(.white)
+                .shadow(radius: 5)
+            VStack(spacing: 5) {
+                Text("恭喜完成数独 数据已记录")
+                Text("总用时\(controller.sudoku.timerCounter.time)")
+            }
+            .padding()
+
+            ZStack{
+                Circle()
+                    .frame(width: 20, height: 20, alignment: .topTrailing)
+                    .foregroundColor(.gray)
+                Image(systemName: "multiply")
+                    .foregroundColor(.white)
+            }
+            .offset(x: 125, y: -40)
+            .onTapGesture {
+                tabSelection = 1
+                controller.sudoku.ClearSudokuInfo()
             }
         }
     }

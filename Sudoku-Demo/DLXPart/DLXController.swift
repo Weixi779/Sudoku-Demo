@@ -7,35 +7,10 @@
 //
 
 import Foundation
-
-enum difficulty {
-    case easy, normal, hard, unlimit, hell
-}
-
-extension difficulty {
-    func diffDescription() -> String {
-        switch (self) {
-        case.easy: return "简单"
-        case.normal: return "普通"
-        case.hard: return "困难"
-        case.unlimit: return "无限制"
-        case.hell: return "地狱"
-        }
-    }
-    
-    func unkownCount() -> Int {
-        switch (self) {
-        case.easy: return Int.random(in: 10..<16)
-        case.normal: return Int.random(in: 25..<33)
-        case.hard: return Int.random(in: 40..<50)
-        case.unlimit: return -1
-        case.hell: return -1
-        }
-    }
-}
+import SwiftUI
 
 actor DLXController {
-    private var _diff: difficulty = .easy
+    private var _diff: Difficulty = .easy
     private var _taskProgress: String = ""
     
     private var _startBoard = [[Int]]()
@@ -80,7 +55,7 @@ actor DLXController {
         var dlx = DLX(_startBoard)
         if (_diff == .easy || _diff == .normal || _diff == .hard) {
             _finalBoard = dlx.RemoveToSingele(_diff.unkownCount())
-        } else if (_diff == .unlimit || _diff == .hell) {
+        } else {
             _finalBoard = dlx.RemoveToSingele()
         }
     }
@@ -100,8 +75,12 @@ actor DLXController {
         return _taskProgress
     }
     
-    public func setDiff(_ diff: difficulty ) {
+    public func setDiff(_ diff: Difficulty ) {
         _diff = diff
+    }
+    
+    public func getDiff() -> Difficulty {
+        return _diff
     }
     
     public func getDiffDescription() -> String {
