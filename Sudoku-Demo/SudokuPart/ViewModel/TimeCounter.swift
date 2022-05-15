@@ -35,27 +35,17 @@ struct TimerCounter: Codable{
         return "\(mins) : \(secs)"
     }
     
-    mutating func resetTime() {
-        _seconds = 0
-    }
+    mutating func resetTime() { _seconds = 0 }
     
     mutating func addOneSeconds() {
-        if isCounting == true {
-            _seconds += 1
-        }
+        if isCounting == true { _seconds += 1 }
     }
     
-    mutating func startCounting() {
-        isCounting = true
-    }
+    mutating func startCounting() { isCounting = true }
     
-    mutating func stopCounting() {
-        isCounting = false
-    }
+    mutating func stopCounting() { isCounting = false }
     
-    public func exportTime() -> Int {
-        return _seconds
-    }
+    public func exportTime() -> Int { return _seconds }
     
     public func iconSystemName() -> String {
         return isCounting ? "pause.fill" : "play.fill"

@@ -131,19 +131,19 @@ mutating func solve() -> [[Int]] {
  */
 extension DLX {
     mutating func initFinalPlate() -> [[Int]] {
-        let count = 13
-        var temp = 0
-        while temp != count {
-            let x = Int.random(in: 0..<9)
-            let y = Int.random(in: 0..<9)
-
-            let value = Int.random(in: 1...9)
-            if mBoard[x][y] == 0 && isValid(x, y, value){
-                mBoard[x][y] = value
-                setSubsetValue(x, y, value, true)
-                temp += 1
-            }
-        }
+//        let count = 13
+//        var temp = 0
+//        while temp != count {
+//            let x = Int.random(in: 0..<9)
+//            let y = Int.random(in: 0..<9)
+//
+//            let value = Int.random(in: 1...9)
+//            if mBoard[x][y] == 0 && isValid(x, y, value){
+//                mBoard[x][y] = value
+//                setSubsetValue(x, y, value, true)
+//                temp += 1
+//            }
+//        }
         if initSolveSudoku(0,0) == false {
             print("初始化数独无解")
         }
