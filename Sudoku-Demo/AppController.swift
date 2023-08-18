@@ -20,24 +20,22 @@ class AppController: ObservableObject {
     @Published var dlx: DLXController = DLXController()
     @Published var color: ColorController = ColorController()
 
-        
     public var isSolvingSudoku: Bool = false
     
-    private var _task = Task{}
+    private var task = Task{}
     
     init() {
-        if let sudoku = UserDefaults.standard.data(forKey: "sudoku"){
-            let decoder = JSONDecoder()
-            if let sudokuDecoded = try? decoder.decode(SudokuController.self, from: sudoku){
-                self.sudoku = sudokuDecoded
-                return
-            }
+        guard let data = UserDefaults.standard.data(forKey: "sudoku") else {
+            self.sudoku = SudokuController()
+            return
         }
-        self.sudoku = SudokuController.init()
+        
+        let sudoku = try! JSONDecoder().decode(SudokuController.self, from: data)
+        self.sudoku = sudoku
     }
     
     func createNewSudoku() {
-        _task = Task.init {
+        task = Task.init {
             isSolvingSudoku = true
             let result = await dlx.createSudoku()
             if Task.isCancelled { return }
@@ -54,7 +52,7 @@ class AppController: ObservableObject {
     }
     
     func canelCrateSudoku() {
-        _task.cancel()
+        task.cancel()
         isSolvingSudoku = false
     }
 }
