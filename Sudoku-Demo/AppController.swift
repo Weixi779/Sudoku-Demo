@@ -9,7 +9,7 @@ import SwiftUI
 
 @MainActor
 class AppController: ObservableObject {
-    @Published var sudoku: SudokuController{
+    @Published var sudoku: SudokuController {
         didSet{
             let encoder = JSONEncoder()
             if let encoder = try? encoder.encode(sudoku) {
