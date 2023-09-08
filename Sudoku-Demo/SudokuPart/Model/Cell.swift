@@ -38,7 +38,7 @@ struct Cell: Codable {
     private var _fillValue: Int = 0
     private var _isCanFilled = false  // 是否可以被填入
     
-    private var _cellState: CellState = .normal
+    public var state: CellState = .normal
     private var _fontColor: FontColor = .known
     private var _backgroundColor: BackgroundColor = .blank
     
@@ -53,7 +53,7 @@ struct Cell: Codable {
         setTargetValue(targetValue)
         setFillValue(fillValue)
         setCanFilledValue(targetValue != fillValue)
-        normalState()
+        self.state = .normal
     }
 }
 
@@ -140,15 +140,8 @@ extension Cell {
 }
 
 extension Cell {
-    private(set) var cellState: CellState {
-        get { return _cellState }
-        set { _cellState = newValue }
-    }
-    mutating func normalState() {
-        cellState = .normal
-    }
-    mutating func noteState() {
-        cellState = .note
+    mutating func updateState(_ cellState: CellState) {
+        self.state = cellState
     }
 }
 

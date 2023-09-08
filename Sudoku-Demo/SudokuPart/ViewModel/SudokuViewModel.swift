@@ -242,7 +242,7 @@ extension SudokuController {
         let y = selectedCell.y
         // - 1
         if board[x][y].isCanFilled == true {
-            board[x][y].normalState()
+            board[x][y].updateState(.normal)
             clearNote()
             // - 2
             let targetValue = board[x][y].targetValue
@@ -284,7 +284,7 @@ extension SudokuController {
         guard let selectedCell = selectedCell else { return }
         let x = selectedCell.x, y = selectedCell.y
         if board[x][y].isCanFilled == true {
-            board[x][y].normalState()
+            board[x][y].updateState(.normal)
             board[x][y].setFillValue(0)
             clearNote()
             selectAction(x,y)
@@ -302,7 +302,7 @@ extension SudokuController {
         guard let selectedCell = selectedCell else { return }
         let x = selectedCell.x, y = selectedCell.y
         if board[x][y].isCanFilled == true {
-            board[x][y].noteState()
+            board[x][y].updateState(.normal)
             board[x][y].isNoteExist(num) ? board[x][y].subNumForNote(num) : board[x][y].addNumForNote(num)
         }
     }

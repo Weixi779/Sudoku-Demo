@@ -13,7 +13,7 @@ struct SudokuCellView: View {
     var colorSet: ColorController  { controller.color }
     var board: [[Cell]] { controller.sudoku.board }
     var cell: Cell { board[x][y] }
-    var state: CellState { cell.cellState }
+    var state: CellState { cell.state }
     
     let x: Int
     let y: Int
