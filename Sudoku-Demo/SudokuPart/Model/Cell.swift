@@ -74,6 +74,25 @@ struct Cell: Codable {
 }
 
 extension Cell {
+    /// 执行填写操作
+    /// - Parameter fill: 填入数值
+    /// - Returns: 是否填入正确
+    @discardableResult
+    public mutating func fillAction(_ fill: Int) -> Bool {
+        // 清空笔记恢复正常模式
+        self.switchToNormal()
+        // 判断状态
+        let isCorrect = targetValue == fill
+        let fontColor: CellFontColor = isCorrect ? .correct : .wrong
+        // 更新状态
+        self.fillValue = fill
+        self.fontColor = fontColor
+        
+        return isCorrect
+    }
+}
+
+extension Cell {
     public mutating func updateFillValue(_ value: Int) {
         self.fillValue = value
     }
@@ -97,6 +116,12 @@ extension Cell {
 
 // Note Part
 extension Cell {
+    /// 恢复正常模式
+    private mutating func switchToNormal() {
+        state = .normal
+        clearNoteArray()
+    }
+    
     public mutating func addNumForNote(_ num: Int) {
         self.noteArray[num-1] = true
     }

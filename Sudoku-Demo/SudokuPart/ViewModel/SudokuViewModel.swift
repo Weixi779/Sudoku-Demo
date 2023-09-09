@@ -124,7 +124,7 @@ struct SudokuController: Codable {
         return result
     }
 
-    private func isCorrectCompleted() -> Bool{
+    private var isFillCompleted: Bool {
         return cellList.cellListTotalCount() == 81
     }
     
@@ -237,38 +237,37 @@ extension SudokuController {
      - 4.判断数独是否完成
      */
     mutating func fillAction(_ fillNumber: Int) {
-        guard let selectedCell = selectedCell else { return }
+        guard let selectedCell = selectedCell else {
+            return
+        }
         let x = selectedCell.x
         let y = selectedCell.y
         // - 1
-        if board[x][y].isCanFill == true {
-            board[x][y].updateState(.normal)
-            clearNote()
-            // - 2
-            let targetValue = board[x][y].targetValue
-            if fillNumber == targetValue {
-                board[x][y].updateFontColor(.correct)
-                board[x][y].updateFillValue(fillNumber)
-                cellList.fillCellToList(board[x][y])
-            } else {
-                board[x][y].updateFontColor(.known)
-                board[x][y].updateFillValue(fillNumber)
-                wrongCount += 1
-            }
-            // - 3
-            fliterSeclectArea(x, y).forEach{
-                board[$0.0][$0.1].subNumForNote(fillNumber)
-            }
-            selectAction(selectedCell.x,selectedCell.y)
-            // - 4
-            if isCorrectCompleted() == true {
-                // TODO: 添加经验内容
-                recordFinshGame()
-                isCompleted = true
-                timerCounter.stopCounting()
-                print("Sudoku is completed!")
-            }
+        var targetCell = board[x][y]
+        guard targetCell.isCanFill == true else {
+            return
         }
+        // - 2
+        let isFillCorrect = targetCell.fillAction(fillNumber)
+        if isFillCorrect {
+            cellList.fillCellToList(board[x][y])
+        } else {
+            wrongCount += 1
+        }
+        // - 3
+        fliterSeclectArea(x, y).forEach{ (x,y) in
+            board[x][y].subNumForNote(fillNumber)
+        }
+        selectAction(x,y)
+        // - 4
+        if isFillCorrect == true {
+            // TODO: 添加经验内容
+            recordFinshGame()
+            isCompleted = true
+            timerCounter.stopCounting()
+            print("Sudoku is completed!")
+        }
+        
     }
 }
 
