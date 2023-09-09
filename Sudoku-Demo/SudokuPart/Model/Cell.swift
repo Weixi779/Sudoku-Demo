@@ -16,7 +16,7 @@ enum FontColor: Codable {
 }
 
 // 背景颜色分类
-enum cellColor: Codable {
+enum CellColor: Codable {
     case blank          // 无背景色
     case highLight      // 连带选择
     case selected       // 被选择
@@ -40,7 +40,7 @@ struct Cell: Codable {
     
     private(set) var state: CellState = .normal
     private var _fontColor: FontColor = .known
-    private(set) var backgroundColor: cellColor = .blank
+    private(set) var backgroundColor: CellColor = .blank
     
     private var _noteArray: [Bool] = [Bool](repeating: false, count: 9)
     
@@ -122,7 +122,7 @@ extension Cell {
         self.rect = rect
     }
     
-    mutating public func updateCellColor(_ color: cellColor) {
+    mutating public func updateCellColor(_ color: CellColor) {
         self.backgroundColor = color
     }
 }
