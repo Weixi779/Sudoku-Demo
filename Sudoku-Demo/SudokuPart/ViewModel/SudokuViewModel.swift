@@ -243,18 +243,18 @@ extension SudokuController {
         let x = selectedCell.x
         let y = selectedCell.y
         // - 1
-        if board[x][y].isCanFilled == true {
+        if board[x][y].isCanFill == true {
             board[x][y].updateState(.normal)
             clearNote()
             // - 2
             let targetValue = board[x][y].targetValue
             if fillNumber == targetValue {
-                board[x][y].fontCorrect()
-                board[x][y].setFillValue(fillNumber)
+                board[x][y].updateFontColor(.correct)
+                board[x][y].updateFillValue(fillNumber)
                 cellList.fillCellToList(board[x][y])
             } else {
-                board[x][y].fontWrong()
-                board[x][y].setFillValue(fillNumber)
+                board[x][y].updateFontColor(.known)
+                board[x][y].updateFillValue(fillNumber)
                 wrongCount += 1
             }
             // - 3
@@ -285,9 +285,9 @@ extension SudokuController {
     mutating func deleteAction() {
         guard let selectedCell = selectedCell else { return }
         let x = selectedCell.x, y = selectedCell.y
-        if board[x][y].isCanFilled == true {
+        if board[x][y].isCanFill == true {
             board[x][y].updateState(.normal)
-            board[x][y].setFillValue(0)
+            board[x][y].updateFillValue(0)
             clearNote()
             selectAction(x,y)
         }
@@ -303,7 +303,7 @@ extension SudokuController {
     mutating func noteAction(_ num: Int) {
         guard let selectedCell = selectedCell else { return }
         let x = selectedCell.x, y = selectedCell.y
-        if board[x][y].isCanFilled == true {
+        if board[x][y].isCanFill == true {
             board[x][y].updateState(.normal)
             board[x][y].isNoteExist(num) ? board[x][y].subNumForNote(num) : board[x][y].addNumForNote(num)
         }

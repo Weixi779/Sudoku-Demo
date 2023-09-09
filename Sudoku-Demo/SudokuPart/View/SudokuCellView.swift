@@ -44,7 +44,7 @@ struct SudokuCellView: View {
 
 extension SudokuCellView {
     private var _buildCellView: some View {
-        let cellColor: Color = colorSet.getColor(ColorSet.background(cell.backgroundColor))
+        let cellColor: Color = colorSet.getColor(ColorSet.background(cell.cellColor))
         
         @ViewBuilder var helper: some View {
             switch state {
