@@ -11,7 +11,7 @@ import SwiftUI
 
 
 enum ColorSet {
-    case font(FontColor), background(BackgroundColor)
+    case font(FontColor), background(cellColor)
 }
 
 struct ThemeData {

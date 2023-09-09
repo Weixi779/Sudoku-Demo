@@ -184,26 +184,28 @@ extension SudokuController {
         setStackBlank() // - 1
         fliterSeclectArea(x, y).forEach{
             selectedStack.append(board[$0.0][$0.1]) // - 2
-            board[$0.0][$0.1].colorHighLight() // - 3
+            board[$0.0][$0.1].updateCellColor(.highLight) // - 3
         }
         // - 4
-        board[x][y].colorSelected()
+        board[x][y].updateCellColor(.selected)
         selectedCell = board[x][y]
         // - 5
         let selectedArray = cellList.cellListArray(selectedCell?.fillValue ?? 0) // 加入相同数据内容
         selectedStack += selectedArray
-        selectedArray.forEach{ board[$0.x][$0.y].colorSelected() }
+        selectedArray.forEach{
+            board[$0.x][$0.y].updateCellColor(.selected)
+        }
     }
     
     mutating func setStackBlank() {
-        selectedStack.forEach{ board[$0.x][$0.y].colorBlank() }
+        selectedStack.forEach{ board[$0.x][$0.y].updateCellColor(.blank) }
         selectedStack = [Cell]()
     }
     
     mutating func AllBlank() {
         for x in 0..<9 {
             for y in 0..<9 {
-                board[x][y].colorBlank()
+                board[x][y].updateCellColor(.blank)
             }
         }
     }
@@ -213,7 +215,7 @@ extension SudokuController {
 extension SudokuController {  
     // - 新建位置信息 直到81个全部创建(内容跟着视图走 应该只会刷新一次)
     mutating func initCellPostion(_ x: Int,_ y :Int, _ rect :CGRect) {
-        board[x][y].setCellPostion(rect)
+        board[x][y].updateRect(rect)
     }
     
     // - 移动点击位置Part(一旦触发手势 调用这个函数)
