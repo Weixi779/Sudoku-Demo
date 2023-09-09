@@ -74,7 +74,7 @@ struct SudokuController: Codable {
     private mutating func initBoard() {
         for x in 0..<board.count {
             for y in 0..<board[x].count {
-                board[x][y].resetCell(0, 0)
+                board[x][y].resetTarget(0, 0)
             }
         }
     }
@@ -101,7 +101,7 @@ struct SudokuController: Codable {
             for y in 0..<9 {
                 let targetValue = targetArray[x][y]
                 let fillValue = fillArray[x][y]
-                board[x][y].resetCell(targetValue, fillValue)
+                board[x][y].resetTarget(targetValue, fillValue)
                 cellList.fillCellToList(board[x][y])
             }
         }
@@ -168,8 +168,6 @@ extension SudokuController {
         state = .note
     }
 }
-
-// option + command + <-  | fold
 
 // - MARK: SelectAction Part
 extension SudokuController {

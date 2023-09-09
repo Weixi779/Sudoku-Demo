@@ -39,7 +39,7 @@ struct Cell: Codable {
     /// cell填入数值
     private(set) var fillValue: Int
     /// cell能否填入
-    private(set) var isCanFill = false
+    private(set) var isCanFill: Bool
     
     /// cell填写状态
     private(set) var state: CellState = .normal
@@ -53,24 +53,22 @@ struct Cell: Codable {
     init(x: Int, y: Int) {
         self.targetValue = 0
         self.fillValue = 0
+        self.isCanFill = false
         self.x = x
         self.y = y
         self.noteArray = [Bool](repeating: false, count: 9)
     }
     
-    public mutating func resetCell(_ targetValue: Int, _ fillValue: Int) {
-        self.targetValue = targetValue
-        updateFillValue(fillValue)
-        updateCanFill(targetValue != fillValue)
-        self.state = .normal
-    }
-}
-
-extension Cell {
-    private mutating func updateCanFill(_ value: Bool) {
-        self.isCanFill = value
-        if !self.isCanFill {
-            self.fontColor = .known
+    public mutating func resetTarget(_ target: Int, _ fill: Int) {
+        // 重新设值
+        targetValue = target
+        fillValue = fill
+        isCanFill = targetValue != fillValue
+        // 更新状态
+        state = .normal
+        cellColor = .blank
+        if !isCanFill {
+            fontColor = .known
         }
     }
 }
