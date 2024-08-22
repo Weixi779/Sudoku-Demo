@@ -7,15 +7,15 @@
 import Foundation
 
 struct DLX {
-    private let mBoardSize: Int
-    private let mBoxSize: Int
-    private var mBoard: [[Int]]
-    private var mRowSubset: [[Bool]]
-    private var mColSubset: [[Bool]]
-    private var mBoxSubset: [[Bool]]
+    private let boardSize: Int
+    private let boxSize: Int
+    private var board: [[Int]]
+    private var rowSet: [[Bool]]
+    private var colSet: [[Bool]]
+    private var boxSet: [[Bool]]
     
     init() {
-        mBoard = [
+        board = [
             [0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -26,42 +26,42 @@ struct DLX {
             [0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0]
             ]
-        mBoardSize = mBoard.count
-        mBoxSize = Int(sqrt(Double(mBoardSize)))
-        mRowSubset = [[Bool]](repeating: [Bool](repeating: false, count: mBoardSize), count: mBoardSize)
-        mColSubset = [[Bool]](repeating: [Bool](repeating: false, count: mBoardSize), count: mBoardSize)
-        mBoxSubset = [[Bool]](repeating: [Bool](repeating: false, count: mBoardSize), count: mBoardSize)
+        boardSize = board.count
+        boxSize = Int(sqrt(Double(boardSize)))
+        rowSet = [[Bool]](repeating: [Bool](repeating: false, count: boardSize), count: boardSize)
+        colSet = [[Bool]](repeating: [Bool](repeating: false, count: boardSize), count: boardSize)
+        boxSet = [[Bool]](repeating: [Bool](repeating: false, count: boardSize), count: boardSize)
         initSubsets()
     }
     
     init(_ board: [[Int]]) {
-        mBoard = board
-        mBoardSize = board.count
-        mBoxSize = Int(sqrt(Double(mBoardSize)))
-        mRowSubset = [[Bool]](repeating: [Bool](repeating: false, count: mBoardSize), count: mBoardSize)
-        mColSubset = [[Bool]](repeating: [Bool](repeating: false, count: mBoardSize), count: mBoardSize)
-        mBoxSubset = [[Bool]](repeating: [Bool](repeating: false, count: mBoardSize), count: mBoardSize)
+        self.board = board
+        boardSize = board.count
+        boxSize = Int(sqrt(Double(boardSize)))
+        rowSet = [[Bool]](repeating: [Bool](repeating: false, count: boardSize), count: boardSize)
+        colSet = [[Bool]](repeating: [Bool](repeating: false, count: boardSize), count: boardSize)
+        boxSet = [[Bool]](repeating: [Bool](repeating: false, count: boardSize), count: boardSize)
         initSubsets()
     }
     
     private func computeBoxNo(_ i: Int, _ j: Int) -> Int {
-        let boxRow = i / mBoxSize
-        let boxCol = j / mBoxSize
-        return boxRow * mBoxSize + boxCol
+        let boxRow = i / boxSize
+        let boxCol = j / boxSize
+        return boxRow * boxSize + boxCol
     }
     
     // 是否有效
     private func isValid(_ i:Int, _ j: Int, _ val:Int) -> Bool {
         let tempVal = val - 1
-        let isPresent = mRowSubset[i][tempVal] || mColSubset[j][tempVal] || mBoxSubset[computeBoxNo(i, j)][tempVal]
+        let isPresent = rowSet[i][tempVal] || colSet[j][tempVal] || boxSet[computeBoxNo(i, j)][tempVal]
         return !isPresent
     }
     
     // 初始化数据
     private mutating func initSubsets() {
-        for i in 0..<mBoard.count {
-            for j in 0..<mBoard[i].count {
-                let value = mBoard[i][j]
+        for i in 0..<board.count {
+            for j in 0..<board[i].count {
+                let value = board[i][j]
                 if value != 0 {
                     setSubsetValue(i, j, value, true)
                 }
@@ -71,14 +71,14 @@ struct DLX {
     
     // 设置数值
     private mutating func setSubsetValue(_ i: Int, _ j: Int, _ value: Int, _ present: Bool) {
-        mRowSubset[i][value - 1] = present
-        mColSubset[j][value - 1] = present
-        mBoxSubset[computeBoxNo(i, j)][value - 1] = present
+        rowSet[i][value - 1] = present
+        colSet[j][value - 1] = present
+        boxSet[computeBoxNo(i, j)][value - 1] = present
     }
     
     // 提炼方法
     private mutating func nextStep(_ i: inout Int, _ j: inout Int) {
-        if i == mBoardSize {
+        if i == boardSize {
             i = 0
             j += 1
         }
@@ -91,7 +91,7 @@ extension DLX {
     
 mutating func solve() -> [[Int]] {
         solve(0,0)
-        return mBoard
+        return board
     }
     
     // 解数独
@@ -102,22 +102,22 @@ mutating func solve() -> [[Int]] {
         nextStep(&i, &j)
         
         // 成功条件
-        if j == mBoardSize { return true }
+        if j == boardSize { return true }
         
         // 如果是已知
-        if mBoard[i][j] != 0 { return solve(i+1, j) }
+        if board[i][j] != 0 { return solve(i+1, j) }
         
         // 从1到9遍历
-        for value in (1...mBoardSize) {
+        for value in (1...boardSize) {
             if isValid(i, j, value) {
-                mBoard[i][j] = value
+                board[i][j] = value
                 setSubsetValue(i, j, value, true)
                 if solve(i+1, j) { return true }
                 setSubsetValue(i, j, value, false)
             }
         }
         
-        mBoard[i][j] = 0
+        board[i][j] = 0
         return false
     }
 
@@ -138,8 +138,8 @@ extension DLX {
             let y = Int.random(in: 0..<9)
 
             let value = Int.random(in: 1...9)
-            if mBoard[x][y] == 0 && isValid(x, y, value){
-                mBoard[x][y] = value
+            if board[x][y] == 0 && isValid(x, y, value){
+                board[x][y] = value
                 setSubsetValue(x, y, value, true)
                 temp += 1
             }
@@ -147,7 +147,7 @@ extension DLX {
         if initSolveSudoku(0,0) == false {
             print("初始化数独无解")
         }
-        return mBoard
+        return board
     }
     
     @discardableResult
@@ -156,21 +156,21 @@ extension DLX {
         nextStep(&i, &j)
         
         // 成功条件
-        if j == mBoardSize { return true }
+        if j == boardSize { return true }
         
         // 如果是已知
-        if mBoard[i][j] != 0 { return initSolveSudoku(i+1, j) }
+        if board[i][j] != 0 { return initSolveSudoku(i+1, j) }
         
         // 1到9随机遍历
         for value in (1...9).shuffled() {
             if isValid(i, j, value) {
-                mBoard[i][j] = value
+                board[i][j] = value
                 setSubsetValue(i, j, value, true)
                 if initSolveSudoku(i+1, j) { return true }
                 setSubsetValue(i, j, value, false)
             }
         }
-        mBoard[i][j] = 0
+        board[i][j] = 0
         return false
     }
 }
@@ -189,10 +189,10 @@ fileprivate struct IteratorHelper {
 //-MARK: 初盘Part
 extension DLX {
     private func IteratorStack(_ stack: inout [IteratorHelper]) {
-        for x in 0..<mBoard.count {
-            for y in 0..<mBoard[x].count {
-                if mBoard[x][y] != 0 {
-                    stack.append(IteratorHelper(x, y, mBoard[x][y]))
+        for x in 0..<board.count {
+            for y in 0..<board[x].count {
+                if board[x][y] != 0 {
+                    stack.append(IteratorHelper(x, y, board[x][y]))
                 }
             }
         }
@@ -204,14 +204,14 @@ extension DLX {
         var stack = [IteratorHelper]()
         IteratorStack(&stack)
         for item in stack {
-            mBoard[item.x][item.y] = 0
+            board[item.x][item.y] = 0
             setSubsetValue(item.x, item.y, item.value, false)
             if check() == false {
-                mBoard[item.x][item.y] = item.value
+                board[item.x][item.y] = item.value
                 setSubsetValue(item.x, item.y, item.value, true)
             }
         }
-        return mBoard
+        return board
     }
     
     // 有限制变更
@@ -220,17 +220,17 @@ extension DLX {
         IteratorStack(&stack)
         var reduceNumber = 0
         for item in stack {
-            mBoard[item.x][item.y] = 0
+            board[item.x][item.y] = 0
             setSubsetValue(item.x, item.y, item.value, false)
             if check() == true {
                 reduceNumber += 1
-                if reduceNumber >= target { return mBoard }
+                if reduceNumber >= target { return board }
             } else {
-                mBoard[item.x][item.y] = item.value
+                board[item.x][item.y] = item.value
                 setSubsetValue(item.x, item.y, item.value, true)
             }
         }
-        return mBoard
+        return board
     }
     
     private mutating func check() -> Bool {
@@ -242,13 +242,13 @@ extension DLX {
             nextStep(&i, &j)
             
             // 成功条件
-            if j == mBoardSize {
+            if j == boardSize {
                 sucessfulCount += 1
                 return
             }
             
             // 跳过已知
-            if mBoard[i][j] != 0 {
+            if board[i][j] != 0 {
                 check(i+1, j)
                 return
             }
@@ -256,15 +256,15 @@ extension DLX {
             // 失败条件 不止一个解
             if sucessfulCount > 1 { return }
             
-            for value in (1...mBoardSize) {
+            for value in (1...boardSize) {
                 if isValid(i, j, value) {
-                    mBoard[i][j] = value
+                    board[i][j] = value
                     setSubsetValue(i, j, value, true)
                     check(i+1, j)
                     setSubsetValue(i, j, value, false)
                 }
             }
-            mBoard[i][j] = 0
+            board[i][j] = 0
             return
         }
         return sucessfulCount == 1 ? true : false
