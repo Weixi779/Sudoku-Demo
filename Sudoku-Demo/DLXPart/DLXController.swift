@@ -26,7 +26,7 @@ actor DLXController {
     
     // 解数独
     func solve(_ board: [[Int]]) -> [[Int]] {
-        var dlx = DLX(board)
+        var dlx = DLX(board: board)
         let res = dlx.solve()
         return res
     }
@@ -52,11 +52,11 @@ actor DLXController {
     
     // 生成初盘 -> 同时也是开始接口
     private func startPlate() {
-        var dlx = DLX(_startBoard)
+        var dlx = DLX(board: _startBoard)
         if (_diff == .easy || _diff == .normal || _diff == .hard) {
-            _finalBoard = dlx.RemoveToSingele(_diff.unkownCount())
+            _finalBoard = dlx.removeToSingle(_diff.unkownCount())
         } else {
-            _finalBoard = dlx.RemoveToSingele()
+            _finalBoard = dlx.removeToSingle()
         }
     }
     

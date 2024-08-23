@@ -13,182 +13,156 @@ struct DLX {
     private var rowSet: [[Bool]]
     private var colSet: [[Bool]]
     private var boxSet: [[Bool]]
-    
+
     init() {
-        board = [
-            [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0]
-            ]
-        boardSize = board.count
-        boxSize = Int(sqrt(Double(boardSize)))
-        rowSet = [[Bool]](repeating: [Bool](repeating: false, count: boardSize), count: boardSize)
-        colSet = [[Bool]](repeating: [Bool](repeating: false, count: boardSize), count: boardSize)
-        boxSet = [[Bool]](repeating: [Bool](repeating: false, count: boardSize), count: boardSize)
-        initSubsets()
+        self.init(board: [[Int]](repeating: [Int](repeating: 0, count: 9), count: 9))
     }
-    
-    init(_ board: [[Int]]) {
+
+    init(board: [[Int]]) {
         self.board = board
-        boardSize = board.count
-        boxSize = Int(sqrt(Double(boardSize)))
-        rowSet = [[Bool]](repeating: [Bool](repeating: false, count: boardSize), count: boardSize)
-        colSet = [[Bool]](repeating: [Bool](repeating: false, count: boardSize), count: boardSize)
-        boxSet = [[Bool]](repeating: [Bool](repeating: false, count: boardSize), count: boardSize)
-        initSubsets()
+        self.boardSize = board.count
+        self.boxSize = Int(sqrt(Double(boardSize)))
+        self.rowSet = DLX.newBoolArray(boardSize)
+        self.colSet = DLX.newBoolArray(boardSize)
+        self.boxSet = DLX.newBoolArray(boardSize)
+        self.initializeSets()
     }
-    
-    private func computeBoxNo(_ i: Int, _ j: Int) -> Int {
-        let boxRow = i / boxSize
-        let boxCol = j / boxSize
+
+    private static func newBoolArray(_ size: Int) -> [[Bool]] {
+        return [[Bool]](repeating: [Bool](repeating: false, count: size), count: size)
+    }
+
+    private func computeBoxIndex(_ row: Int, _ col: Int) -> Int {
+        let boxRow = row / boxSize
+        let boxCol = col / boxSize
         return boxRow * boxSize + boxCol
     }
-    
-    // 是否有效
-    private func isValid(_ i:Int, _ j: Int, _ val:Int) -> Bool {
-        let tempVal = val - 1
-        let isPresent = rowSet[i][tempVal] || colSet[j][tempVal] || boxSet[computeBoxNo(i, j)][tempVal]
-        return !isPresent
+
+    private func isValidMove(_ row: Int, _ col: Int, _ value: Int) -> Bool {
+        let adjustedValue = value - 1
+        return !rowSet[row][adjustedValue] && !colSet[col][adjustedValue] && !boxSet[computeBoxIndex(row, col)][adjustedValue]
     }
-    
-    // 初始化数据
-    private mutating func initSubsets() {
-        for i in 0..<board.count {
-            for j in 0..<board[i].count {
-                let value = board[i][j]
+
+    private mutating func initializeSets() {
+        for row in 0..<boardSize {
+            for col in 0..<boardSize {
+                let value = board[row][col]
                 if value != 0 {
-                    setSubsetValue(i, j, value, true)
+                    updateSetValue(row, col, value, true)
                 }
             }
         }
     }
-    
-    // 设置数值
-    private mutating func setSubsetValue(_ i: Int, _ j: Int, _ value: Int, _ present: Bool) {
-        rowSet[i][value - 1] = present
-        colSet[j][value - 1] = present
-        boxSet[computeBoxNo(i, j)][value - 1] = present
+
+    private mutating func updateSetValue(_ row: Int, _ col: Int, _ value: Int, _ present: Bool) {
+        let adjustedValue = value - 1
+        rowSet[row][adjustedValue] = present
+        colSet[col][adjustedValue] = present
+        boxSet[computeBoxIndex(row, col)][adjustedValue] = present
     }
-    
-    // 提炼方法
-    private mutating func nextStep(_ i: inout Int, _ j: inout Int) {
-        if i == boardSize {
-            i = 0
-            j += 1
+
+    private mutating func advanceToNextStep(row: inout Int, col: inout Int) {
+        if row == boardSize {
+            row = 0
+            col += 1
         }
     }
 }
 
-// 解数独Part
-// 接口 solve()
+// Sudoku Solving Part
 extension DLX {
-    
-mutating func solve() -> [[Int]] {
-        solve(0,0)
+    mutating func solve() -> [[Int]] {
+        solve(0, 0)
         return board
     }
     
-    // 解数独
     @discardableResult
-    private mutating func solve(_ i: Int, _ j: Int) -> Bool{
-        var i = i , j = j
+    private mutating func solve(_ row: Int, _ col: Int) -> Bool {
+        var row = row, col = col
+        advanceToNextStep(row: &row, col: &col)
         
-        nextStep(&i, &j)
+        if col == boardSize { return true }
         
-        // 成功条件
-        if j == boardSize { return true }
+        if board[row][col] != 0 { return solve(row + 1, col) }
         
-        // 如果是已知
-        if board[i][j] != 0 { return solve(i+1, j) }
-        
-        // 从1到9遍历
-        for value in (1...boardSize) {
-            if isValid(i, j, value) {
-                board[i][j] = value
-                setSubsetValue(i, j, value, true)
-                if solve(i+1, j) { return true }
-                setSubsetValue(i, j, value, false)
+        for value in 1...boardSize {
+            if isValidMove(row, col, value) {
+                board[row][col] = value
+                updateSetValue(row, col, value, true)
+                if solve(row + 1, col) { return true }
+                updateSetValue(row, col, value, false)
             }
         }
         
-        board[i][j] = 0
+        board[row][col] = 0
         return false
     }
-
 }
 
-
-
-// 生成终盘Part
-/*
- - 接口: initFinalSudoku
- */
+// Final Sudoku Generation Part
 extension DLX {
     mutating func initFinalPlate() -> [[Int]] {
-        let count = 13
-        var temp = 0
-        while temp != count {
-            let x = Int.random(in: 0..<9)
-            let y = Int.random(in: 0..<9)
-
-            let value = Int.random(in: 1...9)
-            if board[x][y] == 0 && isValid(x, y, value){
+        let initialCount = 13
+        var placedNumbers = 0
+        
+        while placedNumbers < initialCount {
+            let x = Int.random(in: 0..<boardSize)
+            let y = Int.random(in: 0..<boardSize)
+            let value = Int.random(in: 1...boardSize)
+            
+            if board[x][y] == 0 && isValidMove(x, y, value) {
                 board[x][y] = value
-                setSubsetValue(x, y, value, true)
-                temp += 1
+                updateSetValue(x, y, value, true)
+                placedNumbers += 1
             }
         }
-        if initSolveSudoku(0,0) == false {
-            print("初始化数独无解")
+        
+        if !initSolveSudoku(0, 0) {
+            print("Initialization of Sudoku failed, unsolvable board.")
         }
+        
         return board
     }
     
     @discardableResult
-    private mutating func initSolveSudoku(_ i:Int, _ j:Int) -> Bool {
-        var i = i ,j = j
-        nextStep(&i, &j)
+    private mutating func initSolveSudoku(_ row: Int, _ col: Int) -> Bool {
+        var row = row, col = col
+        advanceToNextStep(row: &row, col: &col)
         
-        // 成功条件
-        if j == boardSize { return true }
+        if col == boardSize { return true }
         
-        // 如果是已知
-        if board[i][j] != 0 { return initSolveSudoku(i+1, j) }
+        if board[row][col] != 0 { return initSolveSudoku(row + 1, col) }
         
-        // 1到9随机遍历
-        for value in (1...9).shuffled() {
-            if isValid(i, j, value) {
-                board[i][j] = value
-                setSubsetValue(i, j, value, true)
-                if initSolveSudoku(i+1, j) { return true }
-                setSubsetValue(i, j, value, false)
+        for value in (1...boardSize).shuffled() {
+            if isValidMove(row, col, value) {
+                board[row][col] = value
+                updateSetValue(row, col, value, true)
+                if initSolveSudoku(row + 1, col) { return true }
+                updateSetValue(row, col, value, false)
             }
         }
-        board[i][j] = 0
+        
+        board[row][col] = 0
         return false
     }
 }
 
+// Iterator Helper for Sudoku
 fileprivate struct IteratorHelper {
     let x: Int
     let y: Int
     let value: Int
     
-    init(_ x: Int,_ y: Int ,_ value: Int) {
+    init(_ x: Int, _ y: Int, _ value: Int) {
         self.x = x
         self.y = y
         self.value = value
     }
 }
-//-MARK: 初盘Part
+
+// Initial Board Setup Part
 extension DLX {
-    private func IteratorStack(_ stack: inout [IteratorHelper]) {
+    private func iteratorStack(_ stack: inout [IteratorHelper]) {
         for x in 0..<board.count {
             for y in 0..<board[x].count {
                 if board[x][y] != 0 {
@@ -196,78 +170,77 @@ extension DLX {
                 }
             }
         }
-        stack = stack.shuffled()
+        stack.shuffle()
     }
     
-    // 无限制操作
-    mutating func RemoveToSingele() -> [[Int]]{
+    mutating func removeToSingle() -> [[Int]] {
         var stack = [IteratorHelper]()
-        IteratorStack(&stack)
+        iteratorStack(&stack)
+        
         for item in stack {
             board[item.x][item.y] = 0
-            setSubsetValue(item.x, item.y, item.value, false)
-            if check() == false {
+            updateSetValue(item.x, item.y, item.value, false)
+            if !check() {
                 board[item.x][item.y] = item.value
-                setSubsetValue(item.x, item.y, item.value, true)
+                updateSetValue(item.x, item.y, item.value, true)
             }
         }
+        
         return board
     }
     
-    // 有限制变更
-    mutating func RemoveToSingele(_ target: Int) -> [[Int]] {
+    mutating func removeToSingle(_ target: Int) -> [[Int]] {
         var stack = [IteratorHelper]()
-        IteratorStack(&stack)
-        var reduceNumber = 0
+        iteratorStack(&stack)
+        var removedCount = 0
+        
         for item in stack {
             board[item.x][item.y] = 0
-            setSubsetValue(item.x, item.y, item.value, false)
-            if check() == true {
-                reduceNumber += 1
-                if reduceNumber >= target { return board }
+            updateSetValue(item.x, item.y, item.value, false)
+            if check() {
+                removedCount += 1
+                if removedCount >= target { return board }
             } else {
                 board[item.x][item.y] = item.value
-                setSubsetValue(item.x, item.y, item.value, true)
+                updateSetValue(item.x, item.y, item.value, true)
             }
         }
+        
         return board
     }
     
     private mutating func check() -> Bool {
-        var sucessfulCount = 0
-        check(0, 0)
+        var solutionCount = 0
         
-        func check(_ i:Int, _ j:Int) {
-            var i = i , j = j
-            nextStep(&i, &j)
+        func check(_ row: Int, _ col: Int) {
+            var row = row, col = col
+            advanceToNextStep(row: &row, col: &col)
             
-            // 成功条件
-            if j == boardSize {
-                sucessfulCount += 1
+            if col == boardSize {
+                solutionCount += 1
                 return
             }
             
-            // 跳过已知
-            if board[i][j] != 0 {
-                check(i+1, j)
+            if board[row][col] != 0 {
+                check(row + 1, col)
                 return
             }
             
-            // 失败条件 不止一个解
-            if sucessfulCount > 1 { return }
+            if solutionCount > 1 { return }
             
-            for value in (1...boardSize) {
-                if isValid(i, j, value) {
-                    board[i][j] = value
-                    setSubsetValue(i, j, value, true)
-                    check(i+1, j)
-                    setSubsetValue(i, j, value, false)
+            for value in 1...boardSize {
+                if isValidMove(row, col, value) {
+                    board[row][col] = value
+                    updateSetValue(row, col, value, true)
+                    check(row + 1, col)
+                    updateSetValue(row, col, value, false)
                 }
             }
-            board[i][j] = 0
-            return
+            
+            board[row][col] = 0
         }
-        return sucessfulCount == 1 ? true : false
+        
+        check(0, 0)
+        return solutionCount == 1
     }
-
 }
