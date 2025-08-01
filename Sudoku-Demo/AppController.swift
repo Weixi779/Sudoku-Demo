@@ -8,7 +8,7 @@ import Foundation
 import SwiftUI
 
 @MainActor
-class AppController: ObservableObject {
+final class AppController: ObservableObject {
     @Published var sudoku: SudokuController {
         didSet{
             let encoder = JSONEncoder()
@@ -22,7 +22,7 @@ class AppController: ObservableObject {
 
     public var isSolvingSudoku: Bool = false
     
-    private var task = Task{}
+    private var sudokuTask: Task<(), Never>? = nil
     
     init() {
         guard let data = UserDefaults.standard.data(forKey: "sudoku") else {
@@ -35,7 +35,8 @@ class AppController: ObservableObject {
     }
     
     func createNewSudoku() {
-        task = Task.init {
+        sudokuTask?.cancel()
+        sudokuTask = Task.init {
             isSolvingSudoku = true
             let result = await dlx.createSudoku()
             if Task.isCancelled { return }
@@ -52,7 +53,7 @@ class AppController: ObservableObject {
     }
     
     func canelCrateSudoku() {
-        task.cancel()
+        sudokuTask?.cancel()
         isSolvingSudoku = false
     }
 }
