@@ -52,7 +52,7 @@ final class AppController: ObservableObject {
         sudoku.timerCounter.resetTime()
     }
     
-    func canelCrateSudoku() {
+    func cancelCrateSudoku() {
         sudokuTask?.cancel()
         isSolvingSudoku = false
     }

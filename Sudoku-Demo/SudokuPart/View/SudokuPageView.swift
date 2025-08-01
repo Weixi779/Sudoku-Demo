@@ -85,7 +85,7 @@ struct SudokuPageView: View {
             }
             .offset(x: 100, y: -30)
             .onTapGesture {
-                controller.canelCrateSudoku()
+                controller.cancelCrateSudoku()
             }
         }
     }
