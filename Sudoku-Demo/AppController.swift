@@ -49,7 +49,7 @@ final class AppController: ObservableObject {
     
     func restartSudoku() {
         sudoku.initBoardWithArray(sudoku.targetBoard, sudoku.fillBoard)
-        sudoku.timerCounter.resetTime()
+//        sudoku.timerCounter.resetTime()
     }
     
     func cancelCrateSudoku() {

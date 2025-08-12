@@ -168,7 +168,7 @@ struct SudokuContinueButton: View {
                     HStack{
                         Text("\(controller.sudoku.diffDescription)")
                         Text("-")
-                        Text("\(controller.sudoku.timerCounter.time)")
+//                        Text("\(controller.sudoku.timerCounter.time)")
                     }
                     .foregroundColor(.white)
                     .font(.caption)

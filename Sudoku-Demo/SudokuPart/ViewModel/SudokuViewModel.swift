@@ -48,7 +48,7 @@ struct SudokuController: Codable {
     var state: SudokuState = .fill // 面板状态
     
     private var cellList: CellList = CellList()
-    var timerCounter = TimerCounter()
+//    var timerCounter = GameTimerStore()
     
     init() {
         for x in 0..<9 {
@@ -106,8 +106,8 @@ struct SudokuController: Codable {
             }
         }
         setStackBlank()
-        timerCounter.resetTime()
-        timerCounter.startCounting()
+//        timerCounter.resetTime()
+//        timerCounter.startCounting()
         targetBoard = targetArray
         fillBoard = fillArray
     }
@@ -148,14 +148,14 @@ struct SudokuController: Codable {
         if wrongCount == 0 {
             recorder.AddPerfectWinCount()
         }
-        recorder.AddTimeArray(timerCounter.exportTime())
+//        recorder.AddTimeArray(timerCounter.exportTime())
         userInfo.AddExperience(sudokuDiff)
     }
     
     mutating public func ClearSudokuInfo() {
         isCompleted = false
         initAction()
-        timerCounter.resetTime()
+//        timerCounter.resetTime()
     }
 }
 
@@ -264,7 +264,7 @@ extension SudokuController {
             // TODO: 添加经验内容
             recordFinshGame()
             isCompleted = true
-            timerCounter.stopCounting()
+//            timerCounter.stopCounting()
             print("Sudoku is completed!")
         }
         

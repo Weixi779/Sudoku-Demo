@@ -19,7 +19,7 @@ struct SudokuPageView: View {
                 HStack {
                     Text(controller.sudoku.diffDescription)
                     Spacer()
-                    Counter
+//                    Counter
                     Restart
                 }.padding(.horizontal)
                 
@@ -28,13 +28,13 @@ struct SudokuPageView: View {
                 FillButtonPageView()
             }.onReceive(timer) { _ in
                 if tabSelection == 2 {
-                    controller.sudoku.timerCounter.addOneSeconds()
+//                    controller.sudoku.timerCounter.addOneSeconds()
                 }
             }
             if controller.isSolvingSudoku == true {
                 StopCreateSudokuView
                     .onAppear {
-                        controller.sudoku.timerCounter.stopCounting()
+//                        controller.sudoku.timerCounter.stopCounting()
                     }
             }
             if controller.sudoku.isCompleted == true {
@@ -52,20 +52,20 @@ struct SudokuPageView: View {
         }
 
     }
-    var Counter: some View {
-        var timerCounter : TimerCounter {
-            controller.sudoku.timerCounter
-        }
-        return HStack {
-            Text(timerCounter.time)
-            Button {
-                controller.sudoku.timerCounter.iconFunction()
-            } label: {
-                Image(systemName: timerCounter.iconSystemName())
-                    .foregroundColor(.black)
-            }
-        }.padding([.horizontal])
-    }
+//    var Counter: some View {
+//        var timerCounter : GameTimerStore {
+//            controller.sudoku.timerCounter
+//        }
+//        return HStack {
+//            Text(timerCounter.time)
+//            Button {
+//                controller.sudoku.timerCounter.iconFunction()
+//            } label: {
+//                Image(systemName: timerCounter.iconSystemName())
+//                    .foregroundColor(.black)
+//            }
+//        }.padding([.horizontal])
+//    }
     
     var StopCreateSudokuView: some View {
         return ZStack {
@@ -98,7 +98,7 @@ struct SudokuPageView: View {
                 .shadow(radius: 5)
             VStack(spacing: 5) {
                 Text("恭喜完成数独 数据已记录")
-                Text("总用时\(controller.sudoku.timerCounter.time)")
+//                Text("总用时\(controller.sudoku.timerCounter.time)")
             }
             .padding()
 

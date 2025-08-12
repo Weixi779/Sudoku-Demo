@@ -33,12 +33,22 @@ struct RecordView: View {
             }
             
             Section("时间") {
-                SectionShowItem(itemDescription: "最快时间", record: TimerCounter.secondConvertTime(recorder.fastestTime))
-                SectionShowItem(itemDescription: "平均时间", record: TimerCounter.secondConvertTime(recorder.AverageTime()))
+                SectionShowItem(itemDescription: "最快时间", record: timeText(recorder.fastestTime))
+                SectionShowItem(itemDescription: "平均时间", record: timeText(recorder.AverageTime()))
             }
         }
         .pickerStyle(.segmented)
         
+    }
+    
+    private func timeText(_ time: Int) -> String {
+        let minutes = time / 60
+        let seconds = time % 60
+        
+        let formattedMinutes = minutes < 10 ? "0\(minutes)" : "\(minutes)"
+        let formattedSeconds = seconds < 10 ? "0\(seconds)" : "\(seconds)"
+        
+        return "\(formattedMinutes) : \(formattedSeconds)"
     }
 }
 
