@@ -58,7 +58,7 @@ struct UserInfoView: View {
             
             HStack {
                 ZStack {
-                    avator
+                    avatar
                     levelCircle
                 }
                 
@@ -123,7 +123,7 @@ struct UserInfoView: View {
         }
     }
     
-    var avator: some View {
+    var avatar: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 10)
                 .foregroundColor(.blue)
