@@ -12,7 +12,7 @@ import ComposableArchitecture
 struct DifficultySelectorFeature {
     @ObservableState
     struct State: Equatable {
-        var selectedDifficulty: GameDifficulty? = nil
+        var selectedDifficulty: GameDifficulty = .easy
         var isPresented: Bool = false
         var availableDifficulties: [GameDifficulty] = GameDifficulty.allCases
     }
@@ -51,10 +51,10 @@ struct DifficultySelectorFeature {
 extension DifficultySelectorFeature.State {
     
     var selectedTitle: String {
-        selectedDifficulty?.title ?? "未选择"
+        selectedDifficulty.title
     }
     
     var selectedInfoLabel: String {
-        selectedDifficulty?.infoLabel ?? "难度描述"
+        selectedDifficulty.infoLabel
     }
 }

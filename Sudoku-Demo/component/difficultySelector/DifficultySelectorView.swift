@@ -89,15 +89,3 @@ struct DifficultySelectorView: View {
         }
     )
 }
-
-#Preview("With Selection") {
-    DifficultySelectorView(
-        store: Store(
-            initialState: DifficultySelectorFeature.State(
-                selectedDifficulty: .hard
-            )
-        ) {
-            DifficultySelectorFeature()
-        }
-    )
-}
